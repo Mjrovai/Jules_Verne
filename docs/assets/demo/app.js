@@ -409,7 +409,7 @@ async function boot() {
     // Replace the "still downloading" note, which is now out of date.
     ui.story.innerHTML =
       '<span class="placeholder">Enter a word and set the machine running, or '
-      + 'press <em>Run the comparison</em> to see both models on the same seed.</span>';
+      + 'press <em>Run both</em> in Side by Side to see them on the same seed.</span>';
 
   } catch (error) {
     markLoader(ui.loaderTx, ui.txBar, ui.txPct, 'failed', 'failed');

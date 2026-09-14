@@ -112,14 +112,6 @@
         </div>
       </section>
 
-      <section class="panel">
-        <h2>Run Both</h2>
-        <p class="hint" style="margin-top:-6px">The same seed and temperature through
-          each model, so the difference you see is the architecture.</p>
-        <div style="margin-top:14px">
-          <button type="button" class="btn" id="compare" style="width:100%" disabled>Run the comparison</button>
-        </div>
-      </section>
     </div>
 
     <!-- ========================== output ========================== -->
@@ -140,8 +132,13 @@
       <section class="panel">
         <div class="output-head">
           <h2>Side by Side</h2>
-          <span class="stats" id="compare-stats"></span>
+          <div style="display:flex; gap:9px; align-items:center">
+            <span class="stats" id="compare-stats"></span>
+            <button type="button" class="btn btn-primary" id="compare" disabled>Run both</button>
+          </div>
         </div>
+        <p class="hint" style="margin-top:-4px">The same seed and temperature through
+          each model, so the difference you see is the architecture.</p>
         <div class="compare" id="compare-grid">
           <div class="card pending">
             <header><span>RNN</span><span class="meta">waiting</span></header>

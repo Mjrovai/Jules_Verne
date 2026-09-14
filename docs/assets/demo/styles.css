@@ -172,6 +172,16 @@ input[type="range"]::-moz-range-thumb { width: 17px; height: 17px; border-radius
 .btn-primary:hover:not(:disabled) { color: #1b1002; background: linear-gradient(180deg, #ffe09a, #e3b356 45%, #c08432); }
 .btn-sm { padding: 6px 12px; font-size: 0.7rem; }
 
+/* A primary button sitting in a panel header, next to the stats and Copy. It
+   must not inherit .btn-primary's full width, which is meant for the controls
+   column. */
+.output-head .btn-primary {
+  width: auto;
+  padding: 7px 14px;
+  font-size: 0.74rem;
+  letter-spacing: 0.09em;
+}
+
 /* ------------------------------------------------------------------ output */
 
 .output-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
@@ -215,11 +225,14 @@ input[type="range"]::-moz-range-thumb { width: 17px; height: 17px; border-radius
 @media (max-width: 780px) { .compare { grid-template-columns: 1fr; } }
 .card { border: 1px solid var(--edge); border-radius: 8px; overflow: hidden; background: rgba(10, 8, 5, 0.5); display: flex; flex-direction: column; }
 .card header {
-  display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: 4px 10px; flex-wrap: wrap;
   padding: 9px 13px; font-family: var(--ui); font-size: 0.72rem; letter-spacing: 0.09em;
   text-transform: uppercase; color: var(--brass-light);
   background: rgba(217, 164, 65, 0.09); border-bottom: 1px solid var(--edge);
 }
+/* Keep the model name on one line; the measurements may wrap below it. */
+.card header > span:first-child { white-space: nowrap; }
 .card header .meta { font-family: var(--mono); color: var(--brass); letter-spacing: 0; text-transform: none; }
 .card .body {
   font-size: 0.97rem; line-height: 1.75; white-space: pre-wrap; overflow-wrap: anywhere;
