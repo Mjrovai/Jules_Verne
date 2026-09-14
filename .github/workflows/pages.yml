@@ -1,0 +1,60 @@
+# Publish docs/ to GitHub Pages.
+#
+# The demo is entirely static: HTML, CSS, ES modules and two float16 weight
+# blobs. There is nothing to build, so the workflow only uploads the folder.
+#
+# One-time setup: repository Settings -> Pages -> Build and deployment ->
+# Source: "GitHub Actions". After that every push to main republishes.
+name: Deploy demo to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Let a running deploy finish rather than cancelling it mid-publish.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check the demo is complete
+        run: |
+          # Fail loudly rather than publishing a page whose weights are missing.
+          for f in docs/index.html docs/assets/models/manifest.json \
+                   docs/assets/models/rnn.bin docs/assets/models/tx-paired.bin; do
+            test -f "$f" || { echo "missing: $f"; exit 1; }
+            echo "ok  $f  $(du -h "$f" | cut -f1)"
+          done
+
+      - name: Refuse to publish oversized weights
+        run: |
+          # GitHub rejects files over 100 MB outright; Pages is happiest well
+          # below that. The large Transformer is deliberately not shipped.
+          find docs -type f -size +50M | while read -r f; do
+            echo "too large for Pages: $f"; exit 1
+          done
+          echo "all files within size limits"
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+      - id: deployment
+        uses: actions/deploy-pages@v4

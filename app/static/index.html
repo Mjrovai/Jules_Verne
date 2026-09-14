@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jules Verne Bot — RNN Text Generation</title>
+<meta name="description" content="Generate Jules Verne-style prose with a character-level RNN. Enter a word, set the temperature, and watch the machine write.">
+<link rel="icon" type="image/png" href="/static/favicon-64.png">
+<link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+<link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="masthead-inner">
+      <img class="avatar" src="/static/jules_verne_robot.jpg"
+           alt="Engraving of Jules Verne as a robot">
+      <div class="titles">
+        <h1>Jules Verne Bot <span class="amp">&amp;</span> the Writing Machine</h1>
+        <p class="tagline">A character-level recurrent neural network trained on the
+          voyages of the Extraordinary Journeys. Feed it a word; it dreams the rest.</p>
+        <div class="badges" id="badges">
+          <span class="badge">Embedding 256</span>
+          <span class="badge">GRU 1024</span>
+          <span class="badge">Char-level</span>
+          <span class="badge" id="badge-params">— parameters</span>
+          <span class="badge" id="badge-vocab">— characters</span>
+          <span class="badge" id="badge-context">Context 120</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div id="error-slot"></div>
+
+  <div class="layout">
+
+    <!-- ============================== controls ============================== -->
+    <div>
+      <section class="panel docked">
+        <h2>The Controls</h2>
+        <form id="form" autocomplete="off">
+
+          <div class="field" id="model-field" hidden>
+            <label for="model">Model</label>
+            <select id="model"></select>
+            <p class="hint" id="model-blurb"></p>
+          </div>
+
+          <div class="field">
+            <label for="seed">Seed word or phrase</label>
+            <div class="seed-row">
+              <input type="text" id="seed" name="seed" value="THE FLYING SUBMARINE"
+                     placeholder="e.g. Captain Nemo" maxlength="400" required
+                     enterkeyhint="go">
+              <button type="submit" class="btn btn-primary" id="submit">Generate</button>
+            </div>
+            <div class="chips">
+              <button type="button" class="chip" data-seed="THE FLYING SUBMARINE">THE FLYING SUBMARINE</button>
+              <button type="button" class="chip" data-seed="CAPTAIN NEMO">CAPTAIN NEMO</button>
+              <button type="button" class="chip" data-seed="THE MOON">THE MOON</button>
+              <button type="button" class="chip" data-seed="MY UNCLE">MY UNCLE</button>
+              <button type="button" class="chip" data-seed="At the bottom of the sea">At the bottom of the sea</button>
+            </div>
+            <p class="hint">Press <kbd>Enter</kbd> in the box to generate at any time.
+              The network writes character by character, so it continues your text
+              rather than answering it. Unknown characters are ignored.</p>
+          </div>
+
+          <div class="field">
+            <div class="label-row">
+              <label for="temperature">Temperature</label>
+              <span class="readout" id="temperature-readout">0.70</span>
+            </div>
+            <input type="range" id="temperature" name="temperature"
+                   min="0.1" max="1.6" step="0.05" value="0.7">
+            <div class="scale"><span>0.1 — cautious</span><span>1.0 — adventurous</span><span>1.6 — wild</span></div>
+            <p class="hint">Divides the logits before sampling. Low values pick the
+              safest next character; high values flatten the distribution and invite chaos.</p>
+          </div>
+
+          <div class="field">
+            <div class="label-row">
+              <label for="num_generate">Length</label>
+              <span class="readout"><span id="length-readout">800</span> chars</span>
+            </div>
+            <input type="range" id="num_generate" name="num_generate"
+                   min="100" max="3000" step="50" value="800">
+          </div>
+
+          <div class="field">
+            <label class="check">
+              <input type="checkbox" id="greedy" name="greedy">
+              <span>Greedy decoding (always take the most likely character)</span>
+            </label>
+            <p class="hint">Greedy ignores temperature and top-k. It is deterministic and
+              quickly falls into repetitive loops — a good classroom demonstration.</p>
+          </div>
+
+          <div class="field">
+            <label class="check">
+              <input type="checkbox" id="reflow" name="reflow" checked>
+              <span>Rejoin wrapped lines</span>
+            </label>
+            <p class="hint">The novels are hard-wrapped at about 67 characters, and the
+              model reproduces those line breaks mid-sentence. Keep this on for flowing
+              paragraphs, or switch it off to show the raw character stream exactly as the
+              network emitted it.</p>
+          </div>
+
+          <details class="notes" id="advanced">
+            <summary>Advanced sampling</summary>
+            <div class="notes-body">
+              <div class="field" style="margin-top:14px">
+                <div class="label-row">
+                  <label for="top_k">Top-k</label>
+                  <span class="readout" id="top-k-readout">off</span>
+                </div>
+                <input type="range" id="top_k" name="top_k" min="0" max="60" step="1" value="0">
+                <p class="hint">Restrict sampling to the k most likely characters
+                  (the rest are masked). Off means the whole vocabulary competes.</p>
+              </div>
+              <div class="field" style="margin-bottom:0">
+                <label for="seed_value">Random seed</label>
+                <input type="number" id="seed_value" name="seed_value" placeholder="blank = fresh randomness">
+                <p class="hint">Set a number to reproduce a generation exactly, so two
+                  temperatures can be compared on identical footing.</p>
+              </div>
+            </div>
+          </details>
+        </form>
+      </section>
+
+      <section class="panel">
+        <h2>Compare Temperatures</h2>
+        <p class="hint" style="margin-top:-6px">Runs the same seed three times — cautious,
+          balanced and wild — so the effect of temperature is visible side by side.</p>
+        <div style="margin-top:16px">
+          <button type="button" class="btn" id="compare" style="width:100%">Run the comparison</button>
+        </div>
+      </section>
+    </div>
+
+    <!-- ============================== output ============================== -->
+    <div>
+      <section class="panel">
+        <div class="output-head">
+          <h2>From the Machine</h2>
+          <div style="display:flex; gap:10px; align-items:center">
+            <span class="stats" id="stats"></span>
+            <button type="button" class="btn btn-sm" id="copy" disabled>Copy</button>
+          </div>
+        </div>
+        <div class="story" id="story" aria-live="polite">
+          <span class="placeholder">The page is idle. Enter a word on the left — try
+            “THE FLYING SUBMARINE” — and set the machine running.</span>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="output-head">
+          <h2>Models, Side by Side</h2>
+          <button type="button" class="btn btn-sm" id="compare-models">Compare all models</button>
+        </div>
+        <p class="hint" style="margin-top:-6px">Every model gets the identical seed,
+          temperature and sampler, so any difference below comes from the architecture
+          rather than from the settings. The RNN carries a hidden state and answers in
+          milliseconds; the Transformers attend over a KV cache and take seconds.</p>
+        <div class="compare-grid" id="model-grid" style="margin-top:16px">
+          <div class="compare-card">
+            <header><span>Not yet run</span></header>
+            <div class="body"><span class="placeholder">Press “Compare all models”.</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Matters of Method</h2>
+        <div class="notes-body">
+          <p style="margin-top:0">This is the model from the course notebook
+            <code>20_JulesVerneBot_Generating_English_Texts_with_RNN.ipynb</code>, served
+            directly to the browser. It is deliberately small and transparent:</p>
+          <ul>
+            <li><strong>Character-level tokenization.</strong> Every character in the ten
+              novels is a token, giving a vocabulary of <span id="note-vocab">123</span>
+              symbols — letters, punctuation, accents and the odd Greek delta.</li>
+            <li><strong>Two architectures, one tokenizer.</strong> The selector above
+              switches between the character-level <em>GRU</em> from the course notebook
+              and a decoder-only <em>Transformer</em> trained on the identical
+              123-character vocabulary. Both are size-matched at about 4 million
+              parameters, so a difference in the writing is a difference in
+              architecture, not in scale. A 25M-parameter Transformer is included for
+              the scale comparison.</li>
+            <li><strong>Temperature.</strong> Logits are divided by T, then softmaxed and
+              sampled. As T → 0 the model becomes deterministic; as T grows the output
+              grows stranger.</li>
+            <li><strong>Sampling.</strong> Top-k masks all but the k likeliest characters.
+              Greedy decoding is the T → 0 limit and tends to loop.</li>
+            <li><strong>Cost.</strong> The RNN carries a hidden state, so each character
+              costs one fixed step (~0.15 ms). The Transformer carries a KV cache and
+              costs ~3.5 ms per character at 4M parameters, or ~29 ms at 25M — the O(C)
+              attention cost made visible. Both are flat per character: the cost does not
+              grow with how long the text has already become.</li>
+          </ul>
+          <p>Inference here is pure NumPy — the trained weights are read straight from the
+            <code>.keras</code> archive and the GRU recurrence is reimplemented, so the
+            server needs no TensorFlow and answers in milliseconds. That also exposes the
+            arithmetic for teaching.</p>
+          <p style="margin-bottom:0"><em>Known limitations:</em> a 120-character window and
+            no attention mean the prose holds local grammar but loses the thread of a long
+            narrative — the same point the notebook makes when bridging to modern
+            transformer LLMs.</p>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <section class="panel">
+    <div class="output-head">
+      <h2>Temperature, Side by Side</h2>
+      <span class="stats" id="compare-stats"></span>
+    </div>
+    <div class="compare-grid" id="compare-grid">
+      <div class="compare-card">
+        <header><span>Cautious</span><span class="temp">T = 0.5</span></header>
+        <div class="body"><span class="placeholder">Not yet run.</span></div>
+      </div>
+      <div class="compare-card">
+        <header><span>Balanced</span><span class="temp">T = 0.7</span></header>
+        <div class="body"><span class="placeholder">Not yet run.</span></div>
+      </div>
+      <div class="compare-card">
+        <header><span>Adventurous</span><span class="temp">T = 1.0</span></header>
+        <div class="body"><span class="placeholder">Not yet run.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="colophon">
+    <p><strong>Jules Verne Bot</strong> — by Marcelo Rovai, built for a course on
+      Generative AI.<br>
+      Trained on ten novels from Project Gutenberg. Code support from Claude and ChatGPT.</p>
+  </footer>
+</div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

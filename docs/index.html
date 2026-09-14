@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jules Verne Bot — RNN vs Transformer, running in your browser</title>
+<meta name="description" content="Generate Jules Verne-style prose with a character-level GRU and a size-matched Transformer, both running entirely in the browser. Compare them on the same seed and temperature.">
+<link rel="icon" href="assets/img/favicon-64.png">
+<link rel="stylesheet" href="assets/demo/styles.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <img class="avatar" src="assets/img/jules_verne_robot.jpg" alt="Engraving of Jules Verne as a robot">
+    <div class="titles">
+      <h1>Jules Verne Bot <span class="amp">&amp;</span> the Writing Machine</h1>
+      <p class="tagline">Two character-level models trained on the Extraordinary Journeys —
+        a recurrent network and a Transformer — writing side by side, in your browser.</p>
+      <div class="badges">
+        <span class="badge" id="badge-rnn">RNN · 4.10M</span>
+        <span class="badge" id="badge-tx">Transformer · 4.05M</span>
+        <span class="badge">123-character vocabulary</span>
+        <span class="badge">no server · no framework</span>
+      </div>
+      <div class="links">
+        <a href="https://github.com/Mjrovai/Jules_Verne">Source on GitHub</a>
+        <a href="https://github.com/Mjrovai/Jules_Verne/blob/main/EXPERIMENT.md">Experiment notes</a>
+        <a href="https://github.com/Mjrovai/Jules_Verne/blob/main/Train_JulesVerne_Transformer.ipynb">Training notebook</a>
+      </div>
+    </div>
+  </header>
+
+  <div id="error-slot"></div>
+
+  <div class="layout">
+
+    <!-- ========================= controls ========================= -->
+    <div>
+      <section class="panel docked">
+        <h2>The Controls</h2>
+
+        <div class="field">
+          <label for="model">Model</label>
+          <select id="model" disabled>
+            <option>loading the RNN…</option>
+          </select>
+
+          <div class="loader" id="loader-rnn">
+            <div class="row"><span id="rnn-label">RNN weights</span><span class="pct" id="rnn-pct">0%</span></div>
+            <div class="bar"><i id="rnn-bar"></i></div>
+          </div>
+
+          <div class="loader" id="loader-tx">
+            <div class="row"><span id="tx-label">Transformer weights</span><span class="pct" id="tx-pct">waiting</span></div>
+            <div class="bar"><i id="tx-bar"></i></div>
+          </div>
+          <p class="hint">The RNN loads first so the page is usable immediately; the
+            Transformer is fetched in the background. Both are 8&nbsp;MB of 16-bit
+            weights.</p>
+        </div>
+
+        <div class="field">
+          <label for="seed">Seed word or phrase</label>
+          <div class="seed-row">
+            <input type="text" id="seed" value="THE FLYING SUBMARINE" maxlength="400"
+                   placeholder="e.g. Captain Nemo" enterkeyhint="go">
+            <button type="button" class="btn btn-primary" id="generate">Generate</button>
+          </div>
+          <div class="chips" id="chips"></div>
+          <p class="hint">Press <kbd>Enter</kbd> to generate. The model writes one
+            character at a time, so it continues your text rather than answering it.</p>
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label for="temperature">Temperature</label>
+            <span class="readout" id="temperature-readout">0.70</span>
+          </div>
+          <input type="range" id="temperature" min="0.1" max="1.6" step="0.05" value="0.7">
+          <div class="scale"><span>0.1 cautious</span><span>1.0 adventurous</span><span>1.6 wild</span></div>
+          <p class="hint">Divides the logits before sampling. Low values pick the safest
+            next character; high values flatten the distribution and invite chaos.</p>
+        </div>
+
+        <div class="field">
+          <div class="label-row">
+            <label for="length">Length</label>
+            <span class="readout"><span id="length-readout">400</span> chars</span>
+          </div>
+          <input type="range" id="length" min="100" max="1200" step="50" value="400">
+        </div>
+
+        <div class="field">
+          <label class="check">
+            <input type="checkbox" id="greedy">
+            <span>Greedy decoding (always take the most likely character)</span>
+          </label>
+          <label class="check">
+            <input type="checkbox" id="reflow" checked>
+            <span>Rejoin wrapped lines</span>
+          </label>
+          <p class="hint">The novels are hard-wrapped and the models reproduce those line
+            breaks mid-sentence. Switch this off to see the raw character stream.</p>
+        </div>
+
+        <div class="field" style="margin-bottom:0">
+          <label for="seed-value">Random seed</label>
+          <input type="number" id="seed-value" placeholder="blank = different every time">
+          <p class="hint">Reproducible within the page. The browser uses its own
+            generator, so a seed does not reproduce the notebook's exact characters.</p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Run Both</h2>
+        <p class="hint" style="margin-top:-6px">The same seed and temperature through
+          each model, so the difference you see is the architecture.</p>
+        <div style="margin-top:14px">
+          <button type="button" class="btn" id="compare" style="width:100%" disabled>Run the comparison</button>
+        </div>
+      </section>
+    </div>
+
+    <!-- ========================== output ========================== -->
+    <div>
+      <section class="panel">
+        <div class="output-head">
+          <h2>From the Machine</h2>
+          <div style="display:flex; gap:9px; align-items:center">
+            <span class="stats" id="stats"></span>
+            <button type="button" class="btn btn-sm" id="copy" disabled>Copy</button>
+          </div>
+        </div>
+        <div class="story" id="story" aria-live="polite">
+          <span class="placeholder">Loading the RNN weights…</span>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="output-head">
+          <h2>Side by Side</h2>
+          <span class="stats" id="compare-stats"></span>
+        </div>
+        <div class="compare" id="compare-grid">
+          <div class="card pending">
+            <header><span>RNN</span><span class="meta">waiting</span></header>
+            <div class="body"><span class="placeholder">Not yet run.</span></div>
+          </div>
+          <div class="card pending">
+            <header><span>Transformer</span><span class="meta">waiting</span></header>
+            <div class="body"><span class="placeholder">Not yet run.</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>What the Two Models Are</h2>
+
+        <figure>
+          <img src="assets/img/rnn-vs-transformer.svg"
+               alt="Diagram comparing the RNN and the Transformer: how each carries the past, their cost per character, and the measured numbers">
+          <figcaption>The two architectures. The RNN compresses the past into one fixed
+            hidden state; the Transformer keeps every past character's keys and values
+            and attends to them directly. That is the whole difference — the tokenizer,
+            the corpus and the parameter count are held equal.</figcaption>
+        </figure>
+
+        <h3 style="margin-top:22px">Measured</h3>
+        <table class="measure">
+          <thead>
+            <tr><th>Run</th><th>Parameters</th><th>Context</th><th>Val loss</th><th>ms / char</th></tr>
+          </thead>
+          <tbody>
+            <tr class="baseline"><td>RNN · GRU 1024</td><td class="num">4,095,867</td><td class="num">120</td><td class="num">n/a</td><td class="num">0.15</td></tr>
+            <tr><td>Transformer · ctx 120</td><td class="num">4,011,520</td><td class="num">120</td><td class="num">1.098</td><td class="num">3.5</td></tr>
+            <tr><td>Transformer · ctx 256</td><td class="num">4,046,336</td><td class="num">256</td><td class="num">1.009</td><td class="num">3.5</td></tr>
+            <tr class="baseline"><td>Transformer · large</td><td class="num">25,414,144</td><td class="num">256</td><td class="num">1.083</td><td class="num">29.2</td></tr>
+          </tbody>
+        </table>
+        <p class="hint">At equal size, going from a 120- to a 256-character window improved
+          held-out loss from 1.098 to 1.009. The 25M model drove its <em>training</em> loss
+          to 0.597 but only reached 1.083 held out — more parameters did not buy better
+          generalisation. The RNN's 0.45 was a training-set figure in the original
+          notebook, so it is not comparable.</p>
+
+        <figure style="margin-top:22px">
+          <img src="assets/img/transformer-architecture.svg"
+               alt="The Transformer block expanded: layer norm, causal self-attention, residual, layer norm, feed-forward, and the ring-buffer KV cache">
+          <figcaption>Inside the Transformer. The KV cache is the attention equivalent of
+            the RNN's hidden state: each new character overwrites the oldest cache slot and
+            costs one pass, instead of replaying the whole window.</figcaption>
+        </figure>
+
+        <figure style="margin-top:22px">
+          <img src="assets/img/rnn-architecture.svg"
+               alt="The RNN: embedding, a 1024-unit GRU with its three gates, a dense layer and sampling">
+          <figcaption>Inside the RNN. The hidden state is the memory — everything read so
+            far compressed into 1024 numbers, carried forward one character at a time.</figcaption>
+        </figure>
+      </section>
+    </div>
+  </div>
+
+  <footer class="colophon">
+    <p><strong>Jules Verne Bot</strong> — by Marcelo Rovai, for a course on Generative AI.<br>
+      Trained on ten novels from Project Gutenberg. Inference runs entirely in your
+      browser: no TensorFlow, no PyTorch, no server.</p>
+  </footer>
+</div>
+
+<script type="module" src="assets/demo/app.js"></script>
+</body>
+</html>

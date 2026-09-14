@@ -1,0 +1,24 @@
+# Virtual environments and caches
+.venv/
+venv/
+.uvcache/
+__pycache__/
+*.py[cod]
+
+# Scratch space used while developing and verifying
+.scratch/
+
+# OS noise
+.DS_Store
+:memory:.ses
+
+# Redundant archives (the extracted model is committed instead)
+models/verne_rnn_model.keras.zip
+
+# A partial duplicate of the project, created when the Colab notebook uploaded
+# books/ and vernebot/ from a zip. The originals live at the repository root.
+files/
+
+# The duplicate weight files inside Train results/: the models themselves are in
+# models/. The JSON run records stay, since they are the training history.
+Train results/*.h5

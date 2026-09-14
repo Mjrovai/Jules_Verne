@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 606" width="980" height="606"
+     font-family="Georgia, 'Times New Roman', serif" role="img"
+     aria-label="Side-by-side comparison of the RNN and the Transformer">
+  <title>The comparison — RNN against Transformer</title>
+
+  <rect width="980" height="606" fill="#fbf8f2"/>
+
+  <text x="24" y="34" font-size="19" fill="#2f2416" font-weight="bold">
+    The comparison — two architectures, one tokenizer
+  </text>
+  <text x="24" y="55" font-size="13" fill="#6b5a3e">
+    Identical 123-character vocabulary, identical corpus, near-identical parameter count. Only the architecture changes.
+  </text>
+
+  <!-- column headers -->
+  <rect x="24" y="76" width="452" height="34" rx="7" fill="#3f5f6b"/>
+  <text x="250" y="99" font-size="14" fill="#f3ece0" text-anchor="middle" font-weight="bold">
+    RNN — gated recurrent unit
+  </text>
+
+  <rect x="504" y="76" width="452" height="34" rx="7" fill="#b06a3b"/>
+  <text x="730" y="99" font-size="14" fill="#fdf6ea" text-anchor="middle" font-weight="bold">
+    Transformer — causal self-attention
+  </text>
+
+  <!-- what it does with the past -->
+  <text x="24" y="140" font-size="12" fill="#8a7a5c">HOW IT CARRIES THE PAST</text>
+
+  <text x="24" y="168" font-size="12.5" fill="#2f2416">
+    <tspan font-weight="bold">One fixed-size state.</tspan> A vector of 1024
+  </text>
+  <text x="24" y="186" font-size="12.5" fill="#2f2416">
+    numbers is updated at every character. Everything
+  </text>
+  <text x="24" y="204" font-size="12.5" fill="#2f2416">
+    read so far is compressed into it, so old detail
+  </text>
+  <text x="24" y="222" font-size="12.5" fill="#2f2416">
+    fades rather than being kept.
+  </text>
+
+  <text x="504" y="168" font-size="12.5" fill="#2f2416">
+    <tspan font-weight="bold">A cache of keys and values.</tspan> Every past
+  </text>
+  <text x="504" y="186" font-size="12.5" fill="#2f2416">
+    character is kept and attended to directly, so
+  </text>
+  <text x="504" y="204" font-size="12.5" fill="#2f2416">
+    nothing has to be compressed — at the cost of
+  </text>
+  <text x="504" y="222" font-size="12.5" fill="#2f2416">
+    memory that grows with the window.
+  </text>
+
+  <!-- separation -->
+  <line x1="24" y1="248" x2="956" y2="248" stroke="#ddd2ba"/>
+  <text x="24" y="276" font-size="12" fill="#8a7a5c">COST PER GENERATED CHARACTER</text>
+
+  <text x="24" y="304" font-size="12.5" fill="#2f2416">
+    Constant. One GRU step regardless of how long
+  </text>
+  <text x="24" y="322" font-size="12.5" fill="#2f2416">
+    the text has become —
+    <tspan font-family="'SF Mono', Menlo, monospace">O(1)</tspan>.
+  </text>
+
+  <text x="504" y="304" font-size="12.5" fill="#2f2416">
+    Grows with the window. Attention reads every
+  </text>
+  <text x="504" y="322" font-size="12.5" fill="#2f2416">
+    cached position —
+    <tspan font-family="'SF Mono', Menlo, monospace">O(context)</tspan>, and
+    <tspan font-family="'SF Mono', Menlo, monospace">O(context²)</tspan> for a full pass.
+  </text>
+
+  <!-- measured numbers table -->
+  <line x1="24" y1="348" x2="956" y2="348" stroke="#ddd2ba"/>
+  <text x="24" y="376" font-size="12" fill="#8a7a5c">MEASURED (this project)</text>
+
+  <!-- table -->
+  <g font-size="12.5" fill="#2f2416">
+    <text x="24" y="404">parameters</text>
+    <text x="476" y="404" text-anchor="end" font-family="'SF Mono', Menlo, monospace">4,095,867</text>
+    <text x="504" y="404" font-family="'SF Mono', Menlo, monospace">4,046,336</text>
+
+    <text x="24" y="426">context window</text>
+    <text x="476" y="426" text-anchor="end" font-family="'SF Mono', Menlo, monospace">120</text>
+    <text x="504" y="426" font-family="'SF Mono', Menlo, monospace">256</text>
+
+    <text x="24" y="448">validation loss (held out)</text>
+    <text x="476" y="448" text-anchor="end" fill="#8a7a5c">not comparable¹</text>
+    <text x="504" y="448" font-family="'SF Mono', Menlo, monospace">1.009</text>
+
+    <text x="24" y="470">milliseconds per character</text>
+    <text x="476" y="470" text-anchor="end" font-family="'SF Mono', Menlo, monospace">0.15</text>
+    <text x="504" y="470" font-family="'SF Mono', Menlo, monospace">3.5</text>
+
+    <text x="24" y="492">400 characters take</text>
+    <text x="476" y="492" text-anchor="end" font-family="'SF Mono', Menlo, monospace">0.06 s</text>
+    <text x="504" y="492" font-family="'SF Mono', Menlo, monospace">1.4 s</text>
+  </g>
+
+  <!-- footnote -->
+  <text x="24" y="524" font-size="11" fill="#8a7a5c">
+    ¹ The RNN's 0.45 loss was reported on the training set in the original notebook, so it is not like-for-like with a held-out number.
+  </text>
+
+  <!-- conclusion box -->
+  <rect x="24" y="544" width="932" height="56" rx="8" fill="#f3e7cf" stroke="#c9a227" stroke-width="1.5"/>
+  <text x="44" y="568" font-size="12.5" fill="#2f2416">
+    <tspan font-weight="bold">What the experiment isolates:</tspan>
+    at equal size and equal tokenizer, longer context improved held-out loss from 1.098 to 1.009.
+  </text>
+  <text x="44" y="588" font-size="12.5" fill="#2f2416">
+    A 25M-parameter version reached 0.597 on the training set but only 1.083 held out — more parameters, no better generalisation.
+  </text>
+</svg>

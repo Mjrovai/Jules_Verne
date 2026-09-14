@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 516" width="980" height="516"
+     font-family="Georgia, 'Times New Roman', serif" role="img"
+     aria-label="Architecture of the Jules Verne decoder-only Transformer">
+  <title>Jules Verne Transformer — decoder-only, 5 layers</title>
+
+  <defs>
+    <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8a6a2f"/>
+    </marker>
+    <marker id="a2r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#a4552e"/>
+    </marker>
+  </defs>
+
+  <rect width="980" height="516" fill="#fbf8f2"/>
+
+  <text x="24" y="34" font-size="19" fill="#2f2416" font-weight="bold">
+    Jules Verne Transformer — decoder-only
+  </text>
+  <text x="24" y="55" font-size="13" fill="#6b5a3e">
+    4,046,336 parameters · the size-matched partner of the RNN · 256-character window
+  </text>
+
+  <!-- one block, expanded -->
+  <text x="24" y="94" font-size="13" fill="#6b5a3e">one block (repeated 5×), shown expanded:</text>
+
+  <!-- input -->
+  <text x="24" y="146" font-size="12" fill="#6b5a3e">characters</text>
+  <text x="24" y="164" font-size="12" fill="#2f2416" font-family="'SF Mono', Menlo, monospace">"THE FLY"</text>
+
+  <line x1="96" y1="158" x2="140" y2="158" stroke="#8a6a2f" stroke-width="1.6" marker-end="url(#a2)"/>
+
+  <!-- embeddings -->
+  <rect x="144" y="118" width="164" height="80" rx="8" fill="#3f5f6b" stroke="#2c454e"/>
+  <text x="226" y="144" font-size="13" fill="#f3ece0" text-anchor="middle" font-weight="bold">Token + position</text>
+  <text x="226" y="164" font-size="11" fill="#cfe0e4" text-anchor="middle">wte[123→256]</text>
+  <text x="226" y="181" font-size="11" fill="#cfe0e4" text-anchor="middle">+ wpe[256→256]</text>
+
+  <line x1="308" y1="158" x2="352" y2="158" stroke="#8a6a2f" stroke-width="1.6" marker-end="url(#a2)"/>
+
+  <!-- block body -->
+  <rect x="356" y="96" width="300" height="330" rx="10" fill="#fffdf8" stroke="#c9a227" stroke-width="1.8"/>
+
+  <!-- layer norm + attention -->
+  <rect x="376" y="116" width="260" height="26" rx="6" fill="#e8d9a8"/>
+  <text x="506" y="134" font-size="12" fill="#4a3c22" text-anchor="middle">LayerNorm</text>
+
+  <rect x="376" y="152" width="260" height="86" rx="6" fill="#d9a441"/>
+  <text x="506" y="174" font-size="13" fill="#2f2416" text-anchor="middle" font-weight="bold">Causal self-attention · 4 heads</text>
+  <text x="506" y="196" font-size="11" fill="#4a3c22" text-anchor="middle" font-family="'SF Mono', Menlo, monospace">softmax(QKᵀ/√d) · V</text>
+  <text x="506" y="214" font-size="11" fill="#4a3c22" text-anchor="middle">each character sees only earlier ones</text>
+  <text x="506" y="230" font-size="10.5" fill="#6b4a15" text-anchor="middle">this is where the RNN uses recurrence instead</text>
+
+  <!-- residual -->
+  <path d="M 366 195 L 344 195 L 344 296 L 366 296" fill="none" stroke="#a4552e"
+        stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#a2r)"/>
+  <text x="338" y="250" font-size="10.5" fill="#a4552e" text-anchor="end">residual</text>
+
+  <rect x="376" y="258" width="260" height="26" rx="6" fill="#e8d9a8"/>
+  <text x="506" y="276" font-size="12" fill="#4a3c22" text-anchor="middle">LayerNorm</text>
+
+  <rect x="376" y="294" width="260" height="72" rx="6" fill="#b06a3b"/>
+  <text x="506" y="316" font-size="13" fill="#fdf6ea" text-anchor="middle" font-weight="bold">Feed-forward · 256 → 1024 → 256</text>
+  <text x="506" y="338" font-size="11" fill="#f6e3d4" text-anchor="middle" font-family="'SF Mono', Menlo, monospace">Linear → GELU → Linear</text>
+  <text x="506" y="356" font-size="10.5" fill="#f0cfb8" text-anchor="middle">GELU must be the exact erf form, not tanh</text>
+
+  <path d="M 366 330 L 344 330 L 344 400 L 366 400" fill="none" stroke="#a4552e"
+        stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#a2r)"/>
+
+  <rect x="376" y="386" width="260" height="26" rx="6" fill="#e8d9a8"/>
+  <text x="506" y="404" font-size="12" fill="#4a3c22" text-anchor="middle">LayerNorm → Linear (123 logits)</text>
+
+  <!-- KV cache -->
+  <rect x="700" y="152" width="252" height="120" rx="8" fill="#f3e7cf" stroke="#c9a227" stroke-width="1.5"/>
+  <text x="826" y="176" font-size="13" fill="#2f2416" text-anchor="middle" font-weight="bold">KV cache — a ring buffer</text>
+  <text x="716" y="198" font-size="11" fill="#5c4a2a">Each new character overwrites the oldest</text>
+  <text x="716" y="215" font-size="11" fill="#5c4a2e">slot and costs exactly one pass: the</text>
+  <text x="716" y="232" font-size="11" fill="#5c4a2e">Transformer's version of the hidden state.</text>
+  <text x="716" y="254" font-size="10.5" fill="#a4552e">Replaying the window instead is 100× slower.</text>
+
+  <path d="M 636 195 L 700 195" fill="none" stroke="#8a6a2f" stroke-width="1.5" marker-end="url(#a2)"/>
+  <path d="M 700 240 L 656 240" fill="none" stroke="#a4552e" stroke-width="1.4"
+        stroke-dasharray="5 4" marker-end="url(#a2r)"/>
+
+  <!-- sampling -->
+  <line x1="656" y1="399" x2="700" y2="399" stroke="#8a6a2f" stroke-width="1.6" marker-end="url(#a2)"/>
+  <rect x="704" y="358" width="248" height="82" rx="8" fill="#2f6b4f" stroke="#22503b"/>
+  <text x="828" y="382" font-size="13" fill="#f3ece0" text-anchor="middle" font-weight="bold">Sampling</text>
+  <text x="828" y="402" font-size="11" fill="#cfe4d8" text-anchor="middle">÷ temperature · top-k · softmax</text>
+  <text x="828" y="420" font-size="11" fill="#cfe4d8" text-anchor="middle">argmax when greedy</text>
+
+  <!-- loop back -->
+  <path d="M 828 440 L 828 486 L 226 486 L 226 198" fill="none" stroke="#8a6a2f"
+        stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#a2)"/>
+  <text x="527" y="478" font-size="11" fill="#6b5a3e" text-anchor="middle">
+    the sampled character is appended and the block runs again — with the context renumbered once it wraps
+  </text>
+
+  <text x="24" y="504" font-size="12" fill="#6b5a3e">
+    Same tokenizer, same 4M parameters, same training corpus as the RNN. Only the architecture differs — which is the point of the comparison.
+  </text>
+</svg>

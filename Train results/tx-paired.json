@@ -1,0 +1,131 @@
+{
+  "config": {
+    "name": "transformer-paired",
+    "vocab_size": 123,
+    "context": 256,
+    "d_model": 256,
+    "n_layers": 5,
+    "n_heads": 4,
+    "d_ff": 1024,
+    "dropout": 0.1,
+    "tie_embeddings": true,
+    "positional": "learned"
+  },
+  "parameters": 4046336,
+  "steps": 6000,
+  "batch_size": 64,
+  "lr": 0.003,
+  "device": "cuda",
+  "final_train_loss": 0.9405366611480713,
+  "final_val_loss": 1.0089315909147263,
+  "final_val_perplexity": 2.742669156438999,
+  "train_minutes": 20.7,
+  "torch_version": "2.11.0+cu128",
+  "history": [
+    {
+      "step": 0,
+      "lr": 1e-05,
+      "train": 4.764457368850708,
+      "val": 4.7674238085746765,
+      "elapsed_s": 5.1
+    },
+    {
+      "step": 500,
+      "lr": 0.002991806414379232,
+      "train": 1.5421591252088547,
+      "val": 1.559385320544243,
+      "elapsed_s": 107.6
+    },
+    {
+      "step": 1000,
+      "lr": 0.002900766990739982,
+      "train": 1.2801125645637512,
+      "val": 1.3076715499162674,
+      "elapsed_s": 209.4
+    },
+    {
+      "step": 1500,
+      "lr": 0.0027153396876851313,
+      "train": 1.184180897474289,
+      "val": 1.21468987762928,
+      "elapsed_s": 311.0
+    },
+    {
+      "step": 2000,
+      "lr": 0.0024495175910977233,
+      "train": 1.1291729837656022,
+      "val": 1.1650687962770463,
+      "elapsed_s": 413.7
+    },
+    {
+      "step": 2500,
+      "lr": 0.0021233606995102183,
+      "train": 1.0902622580528258,
+      "val": 1.135642522573471,
+      "elapsed_s": 515.2
+    },
+    {
+      "step": 3000,
+      "lr": 0.0017614821163876488,
+      "train": 1.066502544283867,
+      "val": 1.1154218107461928,
+      "elapsed_s": 616.8
+    },
+    {
+      "step": 3500,
+      "lr": 0.0013911906469029536,
+      "train": 1.0273487493395805,
+      "val": 1.0805169612169265,
+      "elapsed_s": 718.8
+    },
+    {
+      "step": 4000,
+      "lr": 0.0010404299662802997,
+      "train": 1.0023010134696961,
+      "val": 1.0496248379349709,
+      "elapsed_s": 822.2
+    },
+    {
+      "step": 4500,
+      "lr": 0.0007356698783052499,
+      "train": 0.9830281838774682,
+      "val": 1.047132271528244,
+      "elapsed_s": 923.8
+    },
+    {
+      "step": 5000,
+      "lr": 0.0004999087980682587,
+      "train": 0.965795224905014,
+      "val": 1.0280857741832734,
+      "elapsed_s": 1025.0
+    },
+    {
+      "step": 5500,
+      "lr": 0.00035093819958251194,
+      "train": 0.9479289278388023,
+      "val": 1.019467517733574,
+      "elapsed_s": 1126.7
+    },
+    {
+      "step": 5999,
+      "lr": 0.00030000020504717767,
+      "train": 0.9388798892498016,
+      "val": 1.0167709439992905,
+      "elapsed_s": 1228.1
+    }
+  ],
+  "samples": [
+    {
+      "step": 2000,
+      "text": "THE FLYING SUBMARINES LAST IN WHICH PROJECT GUTENBERG TO REACH A FULL PROJECT\n\nCHAPTER 49\n\nTHE UNCAN TO LAND A FECT OF THE REEA.\n\n\n\nVerne\n\nThe Mountains and Moulshy had been discovered by a certain flame. The\nfollowing in the Indians were startled to the cross with the colonists, the\nprovinces of the _Victoria_. The Caucasus was made them away by the time\nwhich the trees of the trademarks and Captain Len Guy could no"
+    },
+    {
+      "step": 4000,
+      "text": "THE FLYING SUBMARINE\n\nCHAPTER XI A HALF-NOTE OR REFUND - IN WHICH PHILEAS FOGG EASTERN TO WARRANTY, THE GREAT SEA\n CHAPTER II. IN WHICH PHILEAS FOGG SAID THE MOON OF THE CASTAWAYS AT OUR TWO ROUTES EASTERN\n\nCHAPTER III COMPANIONS AND IN WHICH PART OF CONSEQUENT OF THE COASTS, AT THE POSSIBILITY OF SUCH\nDAMAGE, INCLUDING BUT PYM.\n CHAPTER III NEGLECTRICAL MOSCHIFIC\n CHAPTER IIII CIRCISE\n CHAPTER I PROVIDED IN CHAPTER "
+    },
+    {
+      "step": 6000,
+      "text": "THE FLYING SUBMARINE OF THE CHAPTER XXXVI A VENTURE OF SUCH DAMAGELES EVEN IF A BULL\nLICENSE\n\nCHAPTER XII IN WHICH PASSEPARTOUT A VOLUNTAR TO THE INDIAN OCEAN\n\nCHAPTER 13 THE UNITED SOUTH POINT OF SIRUS OF CONTRADEMNT OR\nIMPLIED THE POSSIBILITY OF CAPTAIN GRANT OF THE CASTAWAYS\n CHAPTER XX. IN WHICH PASSEPARTOUT AND HIS BOLD STORY\n CHAPTER XXXII. IN WHICH PHILEAS FOGG EASTERS AN ASCORAL TO THE\nLIST RATE OF THE INDIAN"
+    }
+  ]
+}

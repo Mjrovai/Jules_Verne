@@ -1,0 +1,12 @@
+# Serving the web app (the RNN and any trained Transformer).
+# Deliberately no TensorFlow or PyTorch: inference reads the exported weights
+# with numpy + h5py and runs the forward pass directly.
+numpy>=1.26
+h5py>=3.10
+fastapi>=0.110
+uvicorn[standard]>=0.27
+
+# Training the Transformer only -- needed for train_transformer.py and the
+# Colab notebook, not for serving the site.
+# torch>=2.2
+# matplotlib>=3.8

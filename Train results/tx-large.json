@@ -1,0 +1,219 @@
+{
+  "config": {
+    "name": "transformer-large",
+    "vocab_size": 123,
+    "context": 256,
+    "d_model": 512,
+    "n_layers": 8,
+    "n_heads": 8,
+    "d_ff": 2048,
+    "dropout": 0.1,
+    "tie_embeddings": true,
+    "positional": "learned"
+  },
+  "parameters": 25414144,
+  "steps": 12000,
+  "batch_size": 48,
+  "lr": 0.002,
+  "device": "cuda",
+  "final_train_loss": 0.5964753693342209,
+  "final_val_loss": 1.0833619350194932,
+  "final_val_perplexity": 2.9545960323120504,
+  "train_minutes": 158.52,
+  "torch_version": "2.11.0+cu128",
+  "history": [
+    {
+      "step": 0,
+      "lr": 4e-06,
+      "train": 4.653507924079895,
+      "val": 4.656324231624604,
+      "elapsed_s": 20.9
+    },
+    {
+      "step": 500,
+      "lr": 0.002,
+      "train": 1.551989421248436,
+      "val": 1.5773793488740921,
+      "elapsed_s": 413.9
+    },
+    {
+      "step": 1000,
+      "lr": 0.001991617351432698,
+      "train": 1.2268173396587372,
+      "val": 1.2721810668706894,
+      "elapsed_s": 808.1
+    },
+    {
+      "step": 1500,
+      "lr": 0.0019666255586130196,
+      "train": 1.1349669218063354,
+      "val": 1.1728253215551376,
+      "elapsed_s": 1200.6
+    },
+    {
+      "step": 2000,
+      "lr": 0.0019254901713549079,
+      "train": 1.0788341343402863,
+      "val": 1.1208662778139113,
+      "elapsed_s": 1593.0
+    },
+    {
+      "step": 2500,
+      "lr": 0.0018689774640918398,
+      "train": 1.028632952272892,
+      "val": 1.09786876142025,
+      "elapsed_s": 1985.3
+    },
+    {
+      "step": 3000,
+      "lr": 0.0017981401616339778,
+      "train": 1.0019352599978446,
+      "val": 1.0631507322192193,
+      "elapsed_s": 2379.9
+    },
+    {
+      "step": 3500,
+      "lr": 0.0017142978288967887,
+      "train": 0.9746307268738746,
+      "val": 1.0429096609354018,
+      "elapsed_s": 2773.3
+    },
+    {
+      "step": 4000,
+      "lr": 0.0016190122899033806,
+      "train": 0.9528244137763977,
+      "val": 1.0299166202545167,
+      "elapsed_s": 3167.1
+    },
+    {
+      "step": 4500,
+      "lr": 0.001514058533958037,
+      "train": 0.9361060589551926,
+      "val": 1.0257568046450616,
+      "elapsed_s": 3559.2
+    },
+    {
+      "step": 5000,
+      "lr": 0.0014013916509538875,
+      "train": 0.8996770024299622,
+      "val": 1.0134026437997818,
+      "elapsed_s": 3950.9
+    },
+    {
+      "step": 5500,
+      "lr": 0.0012831104117473706,
+      "train": 0.8793265447020531,
+      "val": 1.016431711614132,
+      "elapsed_s": 4343.8
+    },
+    {
+      "step": 6000,
+      "lr": 0.001161418172028204,
+      "train": 0.8619142562150955,
+      "val": 1.0092103958129883,
+      "elapsed_s": 4738.6
+    },
+    {
+      "step": 6500,
+      "lr": 0.0010385818279717962,
+      "train": 0.8415416985750198,
+      "val": 1.0044020906090736,
+      "elapsed_s": 5131.8
+    },
+    {
+      "step": 7000,
+      "lr": 0.0009168895882526298,
+      "train": 0.8213968947529793,
+      "val": 0.9978563100099563,
+      "elapsed_s": 5524.4
+    },
+    {
+      "step": 7500,
+      "lr": 0.0007986083490461125,
+      "train": 0.7958124667406082,
+      "val": 1.0194969281554223,
+      "elapsed_s": 5916.3
+    },
+    {
+      "step": 8000,
+      "lr": 0.0006859414660419632,
+      "train": 0.7603222489356994,
+      "val": 1.0287271022796631,
+      "elapsed_s": 6310.9
+    },
+    {
+      "step": 8500,
+      "lr": 0.0005809877100966197,
+      "train": 0.7398657247424125,
+      "val": 1.0218320414423943,
+      "elapsed_s": 6703.2
+    },
+    {
+      "step": 9000,
+      "lr": 0.00048570217110321153,
+      "train": 0.7099449798464775,
+      "val": 1.0125353261828423,
+      "elapsed_s": 7099.7
+    },
+    {
+      "step": 9500,
+      "lr": 0.00040185983836602213,
+      "train": 0.6884067267179489,
+      "val": 1.0313772916793824,
+      "elapsed_s": 7492.9
+    },
+    {
+      "step": 10000,
+      "lr": 0.00033102253590816034,
+      "train": 0.6685980528593063,
+      "val": 1.0499716252088547,
+      "elapsed_s": 7885.1
+    },
+    {
+      "step": 10500,
+      "lr": 0.0002745098286450925,
+      "train": 0.6442097693681716,
+      "val": 1.0429436087608337,
+      "elapsed_s": 8279.1
+    },
+    {
+      "step": 11000,
+      "lr": 0.0002333744413869808,
+      "train": 0.6224421203136444,
+      "val": 1.0527734011411667,
+      "elapsed_s": 8673.4
+    },
+    {
+      "step": 11500,
+      "lr": 0.00020838264856730233,
+      "train": 0.6086048454046249,
+      "val": 1.0658171400427818,
+      "elapsed_s": 9066.5
+    },
+    {
+      "step": 11999,
+      "lr": 0.0002000000335827747,
+      "train": 0.5998637929558754,
+      "val": 1.0878997832536696,
+      "elapsed_s": 9458.8
+    }
+  ],
+  "samples": [
+    {
+      "step": 3000,
+      "text": "THE FLYING SUBMARINE FOR ANY PURPOSE THAT a ship was\nto be seen in one or two pounds of a horse, the threatened by chance of being\ncut, the \u201cYankee,\u201d which had come to the thick and seals, of which\nextended the pole at the ground with the air from the window. The little thing\nwas to discover the most saster by the neck of the clouds of the sea. At\nthe bottom of the head, the battery of the globe, which set out on the"
+    },
+    {
+      "step": 6000,
+      "text": "THE FLYING SUBMARINE FORESTS, and which rendered the\nmind of this apparatus, and asked me whether we had an equal wise or\nnot to fix the expedition.\n\n\"I have not a servant at all,\" I replied, coldly.\n\n\"Yes, my boy; it is the statistic acid, and the worst cannot be\nexplained.\"\n\n\"No, my friend,\" I replied, \"I do not know what to take the cause.\nI have come to the pole, where there are a fine day before the\ntide of the "
+    },
+    {
+      "step": 9000,
+      "text": "THE FLYING SUBMARINE\n\n\nAt the end of these two balloons, the balloon, and the balloon, in high\nplace, would suffice to confess them to the place where they could get free\nvessels below the level of the sea. The magnificent confusion of the\napparatus, to which at least had been sent forth by the approach of a\ncoronation they had a tendency. In the meanwhile, they had completely\ndescended the plateau of Prospect Height"
+    },
+    {
+      "step": 12000,
+      "text": "THE FLYING SUBMARINE COMBAT\n\n\nBarbicane never moved. He did not again pronounce upon the contents of\nthis worthy person, and whom he had been so uneasy among the natives,\nwas a Scotchman, who was as good a poor girl as the father as his\nlife. But what grave cried himself of the audience generous. He knew not\nwhat he was about, and what a conspiracy! And how many countries he\nthought in his meaning arrived! He improve"
+    }
+  ]
+}

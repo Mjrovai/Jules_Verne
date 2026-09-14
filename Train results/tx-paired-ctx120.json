@@ -1,0 +1,131 @@
+{
+  "config": {
+    "name": "transformer-paired-ctx120",
+    "vocab_size": 123,
+    "context": 120,
+    "d_model": 256,
+    "n_layers": 5,
+    "n_heads": 4,
+    "d_ff": 1024,
+    "dropout": 0.1,
+    "tie_embeddings": true,
+    "positional": "learned"
+  },
+  "parameters": 4011520,
+  "steps": 6000,
+  "batch_size": 64,
+  "lr": 0.003,
+  "device": "cuda",
+  "final_train_loss": 1.0476421415805817,
+  "final_val_loss": 1.0976065516471862,
+  "final_val_perplexity": 2.996984305689135,
+  "train_minutes": 9.25,
+  "torch_version": "2.11.0+cu128",
+  "history": [
+    {
+      "step": 0,
+      "lr": 1e-05,
+      "train": 4.772128534317017,
+      "val": 4.775597929954529,
+      "elapsed_s": 2.2
+    },
+    {
+      "step": 500,
+      "lr": 0.002991806414379232,
+      "train": 1.6724269360303878,
+      "val": 1.6889075815677643,
+      "elapsed_s": 48.1
+    },
+    {
+      "step": 1000,
+      "lr": 0.002900766990739982,
+      "train": 1.4057831078767777,
+      "val": 1.4317200005054473,
+      "elapsed_s": 93.0
+    },
+    {
+      "step": 1500,
+      "lr": 0.0027153396876851313,
+      "train": 1.3024826258420945,
+      "val": 1.3271410644054413,
+      "elapsed_s": 138.3
+    },
+    {
+      "step": 2000,
+      "lr": 0.0024495175910977233,
+      "train": 1.248156726360321,
+      "val": 1.2776333451271058,
+      "elapsed_s": 184.4
+    },
+    {
+      "step": 2500,
+      "lr": 0.0021233606995102183,
+      "train": 1.205961063504219,
+      "val": 1.2372501850128175,
+      "elapsed_s": 229.7
+    },
+    {
+      "step": 3000,
+      "lr": 0.0017614821163876488,
+      "train": 1.165109446644783,
+      "val": 1.2097975969314576,
+      "elapsed_s": 275.3
+    },
+    {
+      "step": 3500,
+      "lr": 0.0013911906469029536,
+      "train": 1.1463673025369645,
+      "val": 1.1854261010885239,
+      "elapsed_s": 320.9
+    },
+    {
+      "step": 4000,
+      "lr": 0.0010404299662802997,
+      "train": 1.1067362248897552,
+      "val": 1.1534542322158814,
+      "elapsed_s": 367.6
+    },
+    {
+      "step": 4500,
+      "lr": 0.0007356698783052499,
+      "train": 1.093129226565361,
+      "val": 1.1454250067472458,
+      "elapsed_s": 412.9
+    },
+    {
+      "step": 5000,
+      "lr": 0.0004999087980682587,
+      "train": 1.0709023088216783,
+      "val": 1.1220420449972153,
+      "elapsed_s": 458.1
+    },
+    {
+      "step": 5500,
+      "lr": 0.00035093819958251194,
+      "train": 1.053850844502449,
+      "val": 1.1099043279886245,
+      "elapsed_s": 503.3
+    },
+    {
+      "step": 5999,
+      "lr": 0.00030000020504717767,
+      "train": 1.051718643307686,
+      "val": 1.1086657971143723,
+      "elapsed_s": 548.3
+    }
+  ],
+  "samples": [
+    {
+      "step": 2000,
+      "text": "THE FLYING SUBMARINEA would reach the result of this animal.\nIn the moon of the traitors were convented a narrow in the other work, but the\nwind was answering for a mountain than provincing the sea. The engineer as\nthe car ran for the strong which was but demonstrated to the torrent and\npoints on the same tree. The repulsuon of the another bringing the case of\nthe situation was able to send them. There was no doubt o"
+    },
+    {
+      "step": 4000,
+      "text": "THE FLYING SUBMARINE\n\n\nThe convicts immediately received by the arches of Lincoln Island.\n\nThe son the intervention was singularly observed the sea which are going to\nhear their perpendicularly pieces, and fully reached the business of the Archipelago\nto the surface of the United States. It was the charming of the course of\nthis orb of the coast to the water and stop out the wreck of the river. He\nfound the lake was "
+    },
+    {
+      "step": 6000,
+      "text": "THE FLYING SUBMARINE\n CHAPTER XVIII. THE PROJECT GUTENBERG EBOOK ARRIVES\n CHAPTER XXXIX. IN WHICH PHILEAS FOGG AND HIS OBSERVERS\n CHAPTER XVII. IN WHICH PHILEAS FIX, DUNCAN and CoNSEQUENTIAL\n CHAPTER XVII. IN WHICH PASSEPARTOUT THE GORDERS OF THE PROJECT GUTENBERG\u2122\n\nPROVIDED         LICENSE\n  THAT YOU GIVE NO REPLIED START\n CHAPTER XXV. IN WHICH PHILEAS FOGG\n CHAPTER XVIII AGREE TO PHILEAS FOGG SEEM\n OF DAMAGES - I a"
+    }
+  ]
+}

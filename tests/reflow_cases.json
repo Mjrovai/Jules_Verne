@@ -1,0 +1,52 @@
+{
+ "cases": [
+  {
+   "input": "The shore was\nlined with black rocks\nfor a mile.",
+   "expected": "The shore was lined with black rocks for a mile."
+  },
+  {
+   "input": "First paragraph here.\n\nSecond paragraph here.",
+   "expected": "First paragraph here.\n\nSecond paragraph here."
+  },
+  {
+   "input": "One.\n\n\nTwo.",
+   "expected": "One.\n\nTwo."
+  },
+  {
+   "input": "\n\nHello there.\n\n",
+   "expected": "Hello there."
+  },
+  {
+   "input": "\"Where are we?\"\nasked the captain.\n\n\"Below the sea,\"\nreplied Nemo.",
+   "expected": "\"Where are we?\" asked the captain.\n\n\"Below the sea,\" replied Nemo."
+  },
+  {
+   "input": "The  ship   sailed\n  west  .",
+   "expected": "The ship sailed west ."
+  },
+  {
+   "input": "Nemo",
+   "expected": "Nemo"
+  },
+  {
+   "input": "",
+   "expected": ""
+  },
+  {
+   "input": "\n\n\n",
+   "expected": ""
+  },
+  {
+   "input": "Line one.\r\nLine two.\r\n\r\nNew para.",
+   "expected": "Line one. Line two.\n\nNew para."
+  },
+  {
+   "input": "A\nB\n\n\n\nC\nD",
+   "expected": "A B\n\nC D"
+  },
+  {
+   "input": "trailing spaces   \nand more   ",
+   "expected": "trailing spaces and more"
+  }
+ ]
+}
