@@ -85,7 +85,21 @@ function progressText(received, total) {
 
 /* -------------------------------------------------------------- generation */
 
-/** Reveal text character by character so the page feels alive while it writes. */
+/**
+ * Reveal text character by character so the page feels alive while it writes.
+ *
+ * The animation follows the writing by scrolling to the bottom, but it must not
+ * fight the reader: if you scroll up to re-read something while the text is
+ * still arriving, the next frame would drag you back down again. So the
+ * follow-the-bottom behaviour switches itself off for the rest of the run as
+ * soon as a scroll arrives that the animation did not cause.
+ */
+let followOutput = true;
+
+function atBottom(node, slack = 4) {
+  return node.scrollHeight - node.scrollTop - node.clientHeight <= slack;
+}
+
 function reveal(text, seedLength, animate = true) {
   if (typewriter) cancelAnimationFrame(typewriter);
   ui.story.innerHTML = '';
@@ -107,23 +121,43 @@ function reveal(text, seedLength, animate = true) {
   caret.textContent = '|';
   ui.story.append(caret);
 
+  followOutput = true;
+  let programmatic = false;
+
+  // A scroll event with the flag clear means the reader did it, so stop
+  // following. Wheel and touch are also listened for directly, because on some
+  // trackpads the scroll event arrives a frame late.
+  const reading = () => { followOutput = false; };
+  const onScroll = () => {
+    if (programmatic) { programmatic = false; return; }
+    if (!atBottom(ui.story)) reading();
+  };
+  ui.story.addEventListener('scroll', onScroll, { passive: true });
+  ui.story.addEventListener('wheel', reading, { passive: true });
+  ui.story.addEventListener('touchmove', reading, { passive: true });
+
   const step = Math.max(3, Math.ceil(rest.length / 40));
   let shown = 0;
   const tick = () => {
     shown = Math.min(rest.length, shown + step);
     body.textContent = rest.slice(0, shown);
-    ui.story.scrollTop = ui.story.scrollHeight;
+    if (followOutput) {
+      programmatic = true;
+      ui.story.scrollTop = ui.story.scrollHeight;
+    }
     if (shown < rest.length) {
       typewriter = requestAnimationFrame(tick);
     } else {
       caret.remove();
       typewriter = null;
+      ui.story.removeEventListener('scroll', onScroll);
+      ui.story.removeEventListener('wheel', reading);
+      ui.story.removeEventListener('touchmove', reading);
     }
   };
   typewriter = requestAnimationFrame(tick);
 }
 
-/** Drive a model's generator to completion, yielding to the browser as it goes. */
 function runWith(modelKey, seedText, options) {
   const model = models[modelKey];
   const cleaned = [...seedText].filter((c) => model.instance.vocab
@@ -166,6 +200,7 @@ async function generate() {
   showError('');
   setBusy(true);
   ui.stats.textContent = '';
+  followOutput = true;
 
   const key = ui.model.value || 'rnn';
   const options = {
@@ -299,6 +334,15 @@ async function boot() {
   ui.seed.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') { event.preventDefault(); generate(); }
   });
+
+  // The output panel scrolls, so it has to be reachable and operable from the
+  // keyboard: arrow keys and Page Up/Down once it has focus.
+  for (const node of [ui.story, ...document.querySelectorAll('.card .body')]) {
+    node.tabIndex = 0;
+    node.setAttribute('role', 'region');
+    node.setAttribute('aria-label', 'Generated text, scrollable');
+  }
+  ui.story.tabIndex = 0;
   ui.copy.addEventListener('click', async () => {
     if (!lastText) return;
     try {

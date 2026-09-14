@@ -180,11 +180,30 @@ input[type="range"]::-moz-range-thumb { width: 17px; height: 17px; border-radius
 
 .story {
   font-family: var(--body); font-size: 1.08rem; line-height: 1.85; white-space: pre-wrap;
-  overflow-wrap: anywhere; min-height: 240px; max-height: 60vh; overflow-y: auto;
+  overflow-wrap: anywhere; min-height: 240px; max-height: 60vh;
+  overflow-y: auto; overscroll-behavior: contain;
   padding: 20px 22px; border-radius: 8px; border: 1px solid var(--edge);
   background: linear-gradient(rgba(10, 8, 5, 0.72), rgba(10, 8, 5, 0.9));
   box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.6);
+  /* The generated text regularly runs past the panel, and macOS hides overlay
+     scrollbars until you already know to scroll. Pin a slimmer brass one so it
+     is obvious there is more to read. */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(217, 164, 65, 0.45) rgba(255, 255, 255, 0.05);
 }
+
+.story::-webkit-scrollbar { width: 10px; }
+.story::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); border-radius: 0 8px 8px 0; }
+.story::-webkit-scrollbar-thumb {
+  background: rgba(217, 164, 65, 0.40);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+.story::-webkit-scrollbar-thumb:hover { background: rgba(217, 164, 65, 0.70); background-clip: content-box; }
+
+/* Keyboard scrolling needs a focusable, focus-visible target. */
+.story:focus-visible { outline: 2px solid var(--brass); outline-offset: 3px; }
 .story .seed { color: var(--brass-pale); font-weight: 600; }
 .story .caret { display: inline-block; width: 0.55em; background: var(--brass); color: transparent; animation: blink 1s steps(1) infinite; }
 @keyframes blink { 0%,49% { opacity: 1; } 50%,100% { opacity: 0; } }
@@ -202,7 +221,18 @@ input[type="range"]::-moz-range-thumb { width: 17px; height: 17px; border-radius
   background: rgba(217, 164, 65, 0.09); border-bottom: 1px solid var(--edge);
 }
 .card header .meta { font-family: var(--mono); color: var(--brass); letter-spacing: 0; text-transform: none; }
-.card .body { font-size: 0.97rem; line-height: 1.75; white-space: pre-wrap; overflow-wrap: anywhere; padding: 13px; max-height: 320px; overflow-y: auto; flex: 1; }
+.card .body {
+  font-size: 0.97rem; line-height: 1.75; white-space: pre-wrap; overflow-wrap: anywhere;
+  padding: 13px; max-height: 320px; overflow-y: auto; flex: 1;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(217, 164, 65, 0.45) rgba(255, 255, 255, 0.05);
+}
+.card .body::-webkit-scrollbar { width: 9px; }
+.card .body::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); }
+.card .body::-webkit-scrollbar-thumb { background: rgba(217, 164, 65, 0.40); border-radius: 999px; border: 2px solid transparent; background-clip: content-box; }
+.card .body::-webkit-scrollbar-thumb:hover { background: rgba(217, 164, 65, 0.70); background-clip: content-box; }
+.card .body:focus-visible { outline: 2px solid var(--brass); outline-offset: -2px; }
 .card .body .seed { color: var(--brass-pale); font-weight: 600; }
 .card.pending .body { color: var(--ink-faint); font-style: italic; }
 .card.rnn header { border-bottom-color: rgba(120, 180, 140, 0.35); }
