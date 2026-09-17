@@ -15,11 +15,11 @@
    Everything runs locally after that: no network per generation, no server.
    ========================================================================== */
 
-import { loadBundle } from './js/loader.js';
-import { GRUModel, sample as gruSample } from './js/gru.js';
-import { TransformerModel } from './js/transformer.js';
-import { reflow } from './js/reflow.js';
-import { RNG } from './js/rng.js';
+import { loadBundle } from './js/loader.js?v=2';
+import { GRUModel, sample as gruSample } from './js/gru.js?v=2';
+import { TransformerModel } from './js/transformer.js?v=2';
+import { reflow } from './js/reflow.js?v=2';
+import { RNG } from './js/rng.js?v=2';
 
 const BASE = 'assets/models';
 

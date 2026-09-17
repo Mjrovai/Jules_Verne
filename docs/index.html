@@ -6,7 +6,7 @@
 <title>Jules Verne Bot — RNN vs Transformer, running in your browser</title>
 <meta name="description" content="Generate Jules Verne-style prose with a character-level GRU and a size-matched Transformer, both running entirely in the browser. Compare them on the same seed and temperature.">
 <link rel="icon" href="assets/img/favicon-64.png">
-<link rel="stylesheet" href="assets/demo/styles.css">
+<link rel="stylesheet" href="assets/demo/styles.css?v=2">
 </head>
 <body>
 <div class="wrap">
@@ -209,6 +209,10 @@
   </footer>
 </div>
 
-<script type="module" src="assets/demo/app.js"></script>
+<!-- The ?v= on the CSS and the modules is a cache buster: Pages serves these
+     with a long cache lifetime, so a returning visitor would otherwise keep
+     running the previous version. Bump it (here and in the imports inside
+     app.js and js/*.js) whenever the demo code changes. -->
+<script type="module" src="assets/demo/app.js?v=2"></script>
 </body>
 </html>

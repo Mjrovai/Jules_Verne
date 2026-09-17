@@ -20,9 +20,9 @@
    All weight tensors are (out, in), so a linear layer is always `W @ x`.
    ========================================================================== */
 
-import { Mat } from './loader.js';
-import { geluVec, layerNorm, softmax } from './nn.js';
-import { RNG, categorical } from './rng.js';
+import { Mat } from './loader.js?v=2';
+import { geluVec, layerNorm, softmax } from './nn.js?v=2';
+import { RNG, categorical } from './rng.js?v=2';
 
 /* Characters generated between cache rebuilds once the window is full. Mirrors
    REFRESH_EVERY in vernebot/transformer.py; the parity test checks both. */

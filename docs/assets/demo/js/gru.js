@@ -18,8 +18,8 @@
    * the recurrent bias `rb*` applies to all three gates, not only the candidate
    ========================================================================== */
 
-import { Mat } from './loader.js';
-import { RNG, categorical } from './rng.js';
+import { Mat } from './loader.js?v=2';
+import { RNG, categorical } from './rng.js?v=2';
 
 function sigmoid(x) {
   return x >= 0 ? 1 / (1 + Math.exp(-x)) : Math.exp(x) / (1 + Math.exp(x));
