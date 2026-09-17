@@ -79,14 +79,18 @@ loads float16 weights and a single flipped near-tie changes every character afte
 
 | Check | Result |
 |---|---|
-| RNN logits, relative to the logit range | 0.0005 |
+| RNN logits, relative to the logit range | 0.0001 |
 | Transformer logits, relative | 0.0002 |
-| Top-8 characters | identical for both |
-| Greedy token agreement over 123 tokens | identical, past the context limit |
+| Top-8 characters, and the argmax | identical for both |
+| Coherence past the window | 96.9% of the words written past it are in the corpus (fails below 85%) |
 | Reflow, 12 cases | byte-identical to `vernebot/text.py` |
 
-Four bugs were found this way, and three of them produced text plausible enough to look
-finished. Two are worth knowing about because they are easy to reintroduce:
+The coherence check is there because length alone said nothing: the test used to pass on
+output that had already collapsed into word salad. Measured, the wrapping cache scored
+54% and the rebuilt one 97%.
+
+Five bugs were found this way, and four of them produced text plausible enough to look
+finished. Three are worth knowing about because they are easy to reintroduce:
 
 - **GELU must be the exact erf form, not the tanh approximation.** The tanh form is 5x
   faster on a 1024-element vector but the whole model only gets 5% faster, and the
@@ -95,14 +99,23 @@ finished. Two are worth knowing about because they are easy to reintroduce:
   0.0000%. The Python engine had been using tanh for serving — it no longer does.
 - **The feed-forward bias goes before the activation, not after.** Adding it afterwards
   looks almost right and shifts the entire MLP branch.
+- **The KV cache must not wrap.** With learned absolute positions, the newest character
+  would take the oldest slot and so the lowest position, and the model would read a
+  rotated window. The cache is rebuilt every 64 characters instead; see
+  [EXPERIMENT.md](EXPERIMENT.md).
 
 ---
 
-## The two models
+## The three models
 
-The project trains and serves **two architectures on one tokenizer** so they can be
-compared fairly: the same 123-character vocabulary, the same ten novels, and — this is
-the part that makes the comparison mean something — a near-identical parameter count.
+The project trains and serves **two architectures on one tokenizer**, with the
+Transformer at two window sizes, so they can be compared fairly: the same 123-character
+vocabulary, the same ten novels, and — this is the part that makes the comparison mean
+something — a near-identical parameter count.
+
+The middle column is the one that isolates the architecture: same size *and* same window
+as the RNN. The third adds a longer window on top, and the difference between the two
+Transformers is what context length alone buys.
 
 | | RNN | Transformer (matched) | Transformer (ctx 256) |
 |---|---|---|---|
@@ -114,6 +127,8 @@ the part that makes the comparison mean something — a near-identical parameter
 All three are trained on the same cleaned corpus and evaluated on the same held-out
 slices, so the numbers are directly comparable. Each was run with three seeds; the
 RNN-to-Transformer gap of 0.044 is about 22x the seed-to-seed standard deviation.
+
+All three are in the browser demo, and **Run all three** puts them on one seed.
 
 ### The RNN
 

@@ -98,6 +98,11 @@ Seed 1337 is shown. Across three seeds:
 | RNN | 1.1460 | 1.1475 | 1.1497 | **1.1477** | 0.0019 |
 | `tx-paired-ctx120` | 1.1019 | 1.1057 | 1.1046 | **1.1041** | 0.0020 |
 
+All three are in the browser demo at
+<https://mjrovai.github.io/Jules_Verne/>, where **Run all three** writes from one
+seed with each of them, so the losses above can be read next to the prose they
+correspond to.
+
 `tx-large` has **not** been retrained on this corpus and split. Its numbers from
 the first round (val 1.083 at the last step, 0.998 at its best step) were
 measured on different data and must not be put in the same table.

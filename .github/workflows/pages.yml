@@ -38,7 +38,8 @@ jobs:
         run: |
           # Fail loudly rather than publishing a page whose weights are missing.
           for f in docs/index.html docs/assets/models/manifest.json \
-                   docs/assets/models/rnn.bin docs/assets/models/tx-paired.bin; do
+                   docs/assets/models/rnn.bin docs/assets/models/tx-paired.bin \
+                   docs/assets/models/tx-paired-ctx120.bin; do
             test -f "$f" || { echo "missing: $f"; exit 1; }
             echo "ok  $f  $(du -h "$f" | cut -f1)"
           done
