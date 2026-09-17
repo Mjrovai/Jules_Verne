@@ -34,3 +34,6 @@ models_v2/*.ipynb
 # The 2024 models, superseded by the retrained ones. They stay in git history
 # (commit 738abab) and on disk locally; there is no reason to store them twice.
 models/legacy-2024/
+
+# The lecture slides: kept locally, not published with the code.
+15-Text_Generation_verne_bot.pdf
