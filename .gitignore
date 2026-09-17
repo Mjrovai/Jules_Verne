@@ -22,3 +22,15 @@ files/
 # The duplicate weight files inside Train results/: the models themselves are in
 # models/. The JSON run records stay, since they are the training history.
 Train results/*.h5
+
+# The retraining working directory: the weights that matter were copied into
+# models/, and the .keras/.h5 here are byte-identical duplicates. The JSON run
+# records and the logs are kept, since they are the training history.
+models_v2/*.keras
+models_v2/*.h5
+models_v2/seeds/*.h5
+models_v2/*.ipynb
+
+# The 2024 models, superseded by the retrained ones. They stay in git history
+# (commit 738abab) and on disk locally; there is no reason to store them twice.
+models/legacy-2024/

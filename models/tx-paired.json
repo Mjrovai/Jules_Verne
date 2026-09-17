@@ -1,0 +1,224 @@
+{
+  "config": {
+    "name": "transformer-paired",
+    "vocab_size": 123,
+    "context": 256,
+    "d_model": 256,
+    "n_layers": 5,
+    "n_heads": 4,
+    "d_ff": 1024,
+    "dropout": 0.1,
+    "tie_embeddings": true,
+    "positional": "learned"
+  },
+  "parameters": 4046336,
+  "steps": 6000,
+  "exported_step": 5999,
+  "keep_best": true,
+  "last_step_val_loss": 1.0334442257881165,
+  "batch_size": 64,
+  "lr": 0.003,
+  "device": "mps",
+  "corpus_dir": "books_clean",
+  "vocab_dir": "books",
+  "split": "book",
+  "val_fraction": 0.05,
+  "train_characters": 5292865,
+  "val_characters": 278888,
+  "final_train_loss": 0.9592407661676406,
+  "final_val_loss": 1.0337734258174895,
+  "final_val_perplexity": 2.811655415770336,
+  "train_minutes": 12.14,
+  "torch_version": "2.14.0",
+  "history": [
+    {
+      "step": 0,
+      "lr": 1e-05,
+      "train": 4.765511882305145,
+      "val": 4.765392065048218,
+      "elapsed_s": 2.4
+    },
+    {
+      "step": 250,
+      "lr": 0.00251,
+      "train": 2.1166945815086367,
+      "val": 2.1113733649253845,
+      "elapsed_s": 31.8
+    },
+    {
+      "step": 500,
+      "lr": 0.002991806414379232,
+      "train": 1.5446405917406083,
+      "val": 1.5487339079380036,
+      "elapsed_s": 61.5
+    },
+    {
+      "step": 750,
+      "lr": 0.002958690359018096,
+      "train": 1.366032499074936,
+      "val": 1.3745085626840592,
+      "elapsed_s": 91.4
+    },
+    {
+      "step": 1000,
+      "lr": 0.002900766990739982,
+      "train": 1.2735281854867935,
+      "val": 1.2854231953620912,
+      "elapsed_s": 121.5
+    },
+    {
+      "step": 1250,
+      "lr": 0.0028191342951089924,
+      "train": 1.2219328343868257,
+      "val": 1.2413144528865814,
+      "elapsed_s": 151.6
+    },
+    {
+      "step": 1500,
+      "lr": 0.0027153396876851313,
+      "train": 1.188804018497467,
+      "val": 1.212719675898552,
+      "elapsed_s": 181.8
+    },
+    {
+      "step": 1750,
+      "lr": 0.0025913506814768937,
+      "train": 1.165883269906044,
+      "val": 1.1914449095726014,
+      "elapsed_s": 212.1
+    },
+    {
+      "step": 2000,
+      "lr": 0.0024495175910977233,
+      "train": 1.1394240260124207,
+      "val": 1.1588856995105743,
+      "elapsed_s": 243.4
+    },
+    {
+      "step": 2250,
+      "lr": 0.0022925289806000494,
+      "train": 1.1192883640527724,
+      "val": 1.152420762181282,
+      "elapsed_s": 273.8
+    },
+    {
+      "step": 2500,
+      "lr": 0.0021233606995102183,
+      "train": 1.0994193583726883,
+      "val": 1.1365988284349442,
+      "elapsed_s": 304.5
+    },
+    {
+      "step": 2750,
+      "lr": 0.0019452194731286077,
+      "train": 1.0834761679172515,
+      "val": 1.1217532724142074,
+      "elapsed_s": 335.1
+    },
+    {
+      "step": 3000,
+      "lr": 0.0017614821163876488,
+      "train": 1.0751875787973404,
+      "val": 1.1140916258096696,
+      "elapsed_s": 365.2
+    },
+    {
+      "step": 3250,
+      "lr": 0.0015756315235195813,
+      "train": 1.0531718105077743,
+      "val": 1.1023372143507004,
+      "elapsed_s": 395.1
+    },
+    {
+      "step": 3500,
+      "lr": 0.0013911906469029536,
+      "train": 1.050917413830757,
+      "val": 1.0927850395441054,
+      "elapsed_s": 424.8
+    },
+    {
+      "step": 3750,
+      "lr": 0.0012116557165736776,
+      "train": 1.0330096274614333,
+      "val": 1.0807414412498475,
+      "elapsed_s": 454.5
+    },
+    {
+      "step": 4000,
+      "lr": 0.0010404299662802997,
+      "train": 1.0205648079514504,
+      "val": 1.0742451012134553,
+      "elapsed_s": 485.0
+    },
+    {
+      "step": 4250,
+      "lr": 0.0008807591223611407,
+      "train": 1.008141553401947,
+      "val": 1.0647603154182435,
+      "elapsed_s": 514.8
+    },
+    {
+      "step": 4500,
+      "lr": 0.0007356698783052497,
+      "train": 0.9997001111507415,
+      "val": 1.0604206591844558,
+      "elapsed_s": 544.5
+    },
+    {
+      "step": 4750,
+      "lr": 0.0006079125212629668,
+      "train": 0.9934318706393241,
+      "val": 1.0563775837421416,
+      "elapsed_s": 574.2
+    },
+    {
+      "step": 5000,
+      "lr": 0.0004999087980682587,
+      "train": 0.9769958987832069,
+      "val": 1.0455836802721024,
+      "elapsed_s": 603.9
+    },
+    {
+      "step": 5250,
+      "lr": 0.0004137060090156724,
+      "train": 0.9693823546171189,
+      "val": 1.0407994121313096,
+      "elapsed_s": 633.7
+    },
+    {
+      "step": 5500,
+      "lr": 0.00035093819958251194,
+      "train": 0.9702272489666939,
+      "val": 1.042813926935196,
+      "elapsed_s": 663.5
+    },
+    {
+      "step": 5750,
+      "lr": 0.00031279518573937065,
+      "train": 0.9635922029614449,
+      "val": 1.0408072143793106,
+      "elapsed_s": 693.3
+    },
+    {
+      "step": 5999,
+      "lr": 0.00030000020504717767,
+      "train": 0.956510779261589,
+      "val": 1.0334442257881165,
+      "elapsed_s": 723.0
+    }
+  ],
+  "samples": [
+    {
+      "step": 2000,
+      "text": "THE FLYING SUBMARINESS TO THE MOND\n\nThE violence of March rapidly breakfast east fragment of the bodies, five\ndegrees from the words of the _Nautilus_, and the prisoners were\nalready not drawn down their duty.\n\nThe barrier remained summer of the steed, the moment for the club had found\na sudden band up with vorageous s"
+    },
+    {
+      "step": 4000,
+      "text": "THE FLYING SUBMARINE AS TO THE DESERT,\n                                                                           but\n                                                                     \n                                                                                      \"Not     \n                                    "
+    },
+    {
+      "step": 6000,
+      "text": "THE FLYING SUBMARINE OF DETAILS OF DISCOVERY\n\nWhat a single lake now under the steppe of the Indian Ocean?\n\n\u201cNow,\u201d answered Michael Strogoff. \u201cThere are edges of the coast which we\nare constantly dug the name of Nijni-Novgorod.\u201d\n\n\u201cWell, Picturson,\u201d replied Nadia, \u201cor satisfied with the hope of this\nunfortunate man, for"
+    }
+  ]
+}

@@ -1,0 +1,143 @@
+=== tx-paired-ctx120 started Thu Sep 17 13:20:53 -03 2026
+device        : mps
+corpus        : 5,571,753 characters from books_clean/
+vocab         : 123 characters from books/
+train / val   : 5,292,865 / 278,888  (split: book)
+context       : 120
+batch x steps : 64 x 6000
+parameters    : 4,011,520   (RNN baseline: 4,095,867 -- ratio 0.98x)
+step      0/6000  train 4.7724  val 4.7710  ppl   118.04  lr 1.00e-05  [3.4s]
+step    250/6000  train 2.0277  val 2.0241  ppl     7.57  lr 2.51e-03  [15.3s]
+step    500/6000  train 1.6545  val 1.6520  ppl     5.22  lr 2.99e-03  [28.5s]
+step    750/6000  train 1.4900  val 1.4954  ppl     4.46  lr 2.96e-03  [42.0s]
+step   1000/6000  train 1.4070  val 1.4069  ppl     4.08  lr 2.90e-03  [56.0s]
+step   1250/6000  train 1.3431  val 1.3599  ppl     3.90  lr 2.82e-03  [69.7s]
+step   1500/6000  train 1.2915  val 1.3078  ppl     3.70  lr 2.72e-03  [83.2s]
+step   1750/6000  train 1.2714  val 1.2839  ppl     3.61  lr 2.59e-03  [96.7s]
+
+  --- sample at step 2000 ---
+  THE FLYING SUBMARINE THE MOSCANDEDS OF THE AN AND YORANNIN
+  
+  "The travelers of the _Nautilus_, which we made the corral providence
+  of the land only in the movement?"
+  
+  "Yes, John Mangles," said my uncle.
+  
+  "I ask my dear Holt," answered the ground, "I shall see the most proposible
+  considerate in the sun’s there."
+  
+  "It is 
+
+step   2000/6000  train 1.2488  val 1.2595  ppl     3.52  lr 2.45e-03  [111.6s]
+step   2250/6000  train 1.2268  val 1.2533  ppl     3.50  lr 2.29e-03  [125.2s]
+step   2500/6000  train 1.2105  val 1.2235  ppl     3.40  lr 2.12e-03  [138.8s]
+step   2750/6000  train 1.1920  val 1.2117  ppl     3.36  lr 1.95e-03  [152.4s]
+step   3000/6000  train 1.1716  val 1.2028  ppl     3.33  lr 1.76e-03  [166.1s]
+step   3250/6000  train 1.1507  val 1.1830  ppl     3.26  lr 1.58e-03  [179.9s]
+step   3500/6000  train 1.1457  val 1.1705  ppl     3.22  lr 1.39e-03  [193.9s]
+step   3750/6000  train 1.1314  val 1.1584  ppl     3.18  lr 1.21e-03  [207.9s]
+
+  --- sample at step 4000 ---
+  THE FLYING SUBMARINES
+  
+  And this day had not come toward the following a conversation of the
+  situation was completely attempted the sea of the iceberg. The colonists
+  discovered the water-mountain and affairs to receive it from the earth?
+  
+  As to the canal, everything was finished by the happy engineer, and one
+  of the coa
+
+step   4000/6000  train 1.1202  val 1.1615  ppl     3.19  lr 1.04e-03  [222.9s]
+step   4250/6000  train 1.1113  val 1.1399  ppl     3.13  lr 8.81e-04  [237.0s]
+step   4500/6000  train 1.1009  val 1.1257  ppl     3.08  lr 7.36e-04  [251.3s]
+step   4750/6000  train 1.0863  val 1.1250  ppl     3.08  lr 6.08e-04  [265.9s]
+step   5000/6000  train 1.0807  val 1.1211  ppl     3.07  lr 5.00e-04  [280.6s]
+step   5250/6000  train 1.0762  val 1.1124  ppl     3.04  lr 4.14e-04  [295.3s]
+step   5500/6000  train 1.0650  val 1.1048  ppl     3.02  lr 3.51e-04  [310.1s]
+step   5750/6000  train 1.0628  val 1.1065  ppl     3.02  lr 3.13e-04  [325.0s]
+step   5999/6000  train 1.0601  val 1.1039  ppl     3.02  lr 3.00e-04  [340.0s]
+
+  --- sample at step 6000 ---
+  THE FLYING SUBMARINE TO DISCOVERY
+  
+  The fearful transal sportsmen gravely affirmed the waves, the important
+  storm of the Pacific Ocean, having at Tabor Island, the stream of the
+  northwest, nor the slacker, nor which the captain gave himself the mass
+  of the granite. The sailor was not long in a doptive consequence betwee
+
+
+final (step 5999): train 1.0544  val 1.1019  perplexity 3.01
+
+exported -> models_v2/tx-paired-ctx120.h5 (16.3 MB)
+run record -> models_v2/tx-paired-ctx120.json
+=== tx-paired-ctx120 finished Thu Sep 17 13:26:38 -03 2026
+=== tx-paired started Thu Sep 17 13:26:38 -03 2026
+device        : mps
+corpus        : 5,571,753 characters from books_clean/
+vocab         : 123 characters from books/
+train / val   : 5,292,865 / 278,888  (split: book)
+context       : 256
+batch x steps : 64 x 6000
+parameters    : 4,046,336   (RNN baseline: 4,095,867 -- ratio 0.99x)
+step      0/6000  train 4.7655  val 4.7654  ppl   117.38  lr 1.00e-05  [2.4s]
+step    250/6000  train 2.1167  val 2.1114  ppl     8.26  lr 2.51e-03  [31.8s]
+step    500/6000  train 1.5446  val 1.5487  ppl     4.71  lr 2.99e-03  [61.5s]
+step    750/6000  train 1.3660  val 1.3745  ppl     3.95  lr 2.96e-03  [91.4s]
+step   1000/6000  train 1.2735  val 1.2854  ppl     3.62  lr 2.90e-03  [121.5s]
+step   1250/6000  train 1.2219  val 1.2413  ppl     3.46  lr 2.82e-03  [151.6s]
+step   1500/6000  train 1.1888  val 1.2127  ppl     3.36  lr 2.72e-03  [181.8s]
+step   1750/6000  train 1.1659  val 1.1914  ppl     3.29  lr 2.59e-03  [212.1s]
+
+  --- sample at step 2000 ---
+  THE FLYING SUBMARINESS TO THE MOND
+  
+  ThE violence of March rapidly breakfast east fragment of the bodies, five
+  degrees from the words of the _Nautilus_, and the prisoners were
+  already not drawn down their duty.
+  
+  The barrier remained summer of the steed, the moment for the club had found
+  a sudden band up with vorageous s
+
+step   2000/6000  train 1.1394  val 1.1589  ppl     3.19  lr 2.45e-03  [243.4s]
+step   2250/6000  train 1.1193  val 1.1524  ppl     3.17  lr 2.29e-03  [273.8s]
+step   2500/6000  train 1.0994  val 1.1366  ppl     3.12  lr 2.12e-03  [304.5s]
+step   2750/6000  train 1.0835  val 1.1218  ppl     3.07  lr 1.95e-03  [335.1s]
+step   3000/6000  train 1.0752  val 1.1141  ppl     3.05  lr 1.76e-03  [365.2s]
+step   3250/6000  train 1.0532  val 1.1023  ppl     3.01  lr 1.58e-03  [395.1s]
+step   3500/6000  train 1.0509  val 1.0928  ppl     2.98  lr 1.39e-03  [424.8s]
+step   3750/6000  train 1.0330  val 1.0807  ppl     2.95  lr 1.21e-03  [454.5s]
+
+  --- sample at step 4000 ---
+  THE FLYING SUBMARINE AS TO THE DESERT,
+                                                                             but
+                                                                       
+                                                                                        "Not     
+                                      
+
+step   4000/6000  train 1.0206  val 1.0742  ppl     2.93  lr 1.04e-03  [485.0s]
+step   4250/6000  train 1.0081  val 1.0648  ppl     2.90  lr 8.81e-04  [514.8s]
+step   4500/6000  train 0.9997  val 1.0604  ppl     2.89  lr 7.36e-04  [544.5s]
+step   4750/6000  train 0.9934  val 1.0564  ppl     2.88  lr 6.08e-04  [574.2s]
+step   5000/6000  train 0.9770  val 1.0456  ppl     2.85  lr 5.00e-04  [603.9s]
+step   5250/6000  train 0.9694  val 1.0408  ppl     2.83  lr 4.14e-04  [633.7s]
+step   5500/6000  train 0.9702  val 1.0428  ppl     2.84  lr 3.51e-04  [663.5s]
+step   5750/6000  train 0.9636  val 1.0408  ppl     2.83  lr 3.13e-04  [693.3s]
+step   5999/6000  train 0.9565  val 1.0334  ppl     2.81  lr 3.00e-04  [723.0s]
+
+  --- sample at step 6000 ---
+  THE FLYING SUBMARINE OF DETAILS OF DISCOVERY
+  
+  What a single lake now under the steppe of the Indian Ocean?
+  
+  “Now,” answered Michael Strogoff. “There are edges of the coast which we
+  are constantly dug the name of Nijni-Novgorod.”
+  
+  “Well, Picturson,” replied Nadia, “or satisfied with the hope of this
+  unfortunate man, for
+
+
+final (step 5999): train 0.9592  val 1.0338  perplexity 2.81
+
+exported -> models_v2/tx-paired.h5 (16.4 MB)
+run record -> models_v2/tx-paired.json
+=== tx-paired finished Thu Sep 17 13:38:49 -03 2026

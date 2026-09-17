@@ -169,24 +169,27 @@
             <tr><th>Run</th><th>Parameters</th><th>Context</th><th>Val loss</th><th>ms / char</th></tr>
           </thead>
           <tbody>
-            <tr class="baseline"><td>RNN · GRU 1024</td><td class="num">4,095,867</td><td class="num">120</td><td class="num">n/a</td><td class="num">0.15</td></tr>
-            <tr><td>Transformer · ctx 120</td><td class="num">4,011,520</td><td class="num">120</td><td class="num">1.098</td><td class="num">3.5</td></tr>
-            <tr><td>Transformer · ctx 256</td><td class="num">4,046,336</td><td class="num">256</td><td class="num">1.009</td><td class="num">3.5</td></tr>
-            <tr class="baseline"><td>Transformer · large</td><td class="num">25,414,144</td><td class="num">256</td><td class="num">1.083</td><td class="num">29.2</td></tr>
+            <tr class="baseline"><td>RNN · GRU 1024</td><td class="num">4,095,867</td><td class="num">120</td><td class="num">1.146</td><td class="num">0.15</td></tr>
+            <tr><td>Transformer · ctx 120</td><td class="num">4,011,520</td><td class="num">120</td><td class="num">1.102</td><td class="num">5.8</td></tr>
+            <tr><td>Transformer · ctx 256</td><td class="num">4,046,336</td><td class="num">256</td><td class="num">1.034</td><td class="num">8.1</td></tr>
           </tbody>
         </table>
-        <p class="hint">At equal size, going from a 120- to a 256-character window improved
-          held-out loss from 1.098 to 1.009. The 25M model drove its <em>training</em> loss
-          to 0.597 but only reached 1.083 held out — more parameters did not buy better
-          generalisation. The RNN's 0.45 was a training-set figure in the original
-          notebook, so it is not comparable.</p>
+        <p class="hint">All three models are trained on the same ten novels, with the
+          Project Gutenberg license stripped out, and measured on the same held-out 5% of
+          every book. At equal size and an equal 120-character window, attention beats
+          recurrence by 0.044 nats per character — small, but about 22 times the
+          seed-to-seed variation over three seeds each. Widening the window to 256
+          characters buys a further 0.068, so context length matters more here than the
+          architecture change does.</p>
 
         <figure style="margin-top:22px">
           <img src="assets/img/transformer-architecture.svg"
                alt="The Transformer block expanded: layer norm, causal self-attention, residual, layer norm, feed-forward, and the ring-buffer KV cache">
           <figcaption>Inside the Transformer. The KV cache is the attention equivalent of
-            the RNN's hidden state: each new character overwrites the oldest cache slot and
-            costs one pass, instead of replaying the whole window.</figcaption>
+            the RNN's hidden state: each new character costs one pass instead of replaying
+            the whole window. It cannot wrap, though — the positions are learned and
+            absolute, so when the window fills the cache is rebuilt from the newest
+            characters, once every 64 of them.</figcaption>
         </figure>
 
         <figure style="margin-top:22px">

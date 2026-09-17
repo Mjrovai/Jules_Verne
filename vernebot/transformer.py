@@ -43,14 +43,20 @@ Two details make it correct rather than merely fast:
 * The prompt is limited to ``context - 1`` characters, reserving one slot, so the
   first generated token never lands on a position a prompt token already used.
 
-**The approximation this buys.** Because the loop feeds one token at a time, the
-cache keeps the prompt tokens' key/values as computed at their original
-positions. A full replay would recompute them at renumbered positions as the
-window slides, so the two agree exactly while the window is filling and diverge
-at the first wrap (verified: identical for the first 119 generated characters,
-then differing). The ring path stays coherent -- it is the standard sliding-window
-scheme -- but it is an approximation, not bit-identical to replay. That trade is
-deliberate: replay is 100x slower and unusable interactively.
+**Why the ring cannot be allowed to wrap.** With learned absolute positions, a
+cached token carries the position it was written with. Once the ring wraps, the
+newest token is written into the oldest slot and therefore carries a *low*
+position, while older text keeps the higher ones: the window the model reads is
+a cyclic rotation of the real text. That is not a mild approximation. Measured
+on the trained models, the output collapses into word salad within a few dozen
+characters of the first wrap, and full replay on the same seed stays coherent.
+
+So :meth:`VerneTransformer.generate` never wraps. It generates on an appending
+cache, which is exact, and when the window is full it **rebuilds**: the oldest
+``REFRESH_EVERY`` characters are dropped and the rest are run through the stack
+again at their new positions, which frees exactly that many slots to append
+into. The cost is one window pass per ``REFRESH_EVERY`` characters rather than
+one per character, which is what made full replay unusable.
 """
 
 from __future__ import annotations
@@ -65,6 +71,13 @@ import h5py
 import numpy as np
 
 __all__ = ["TransformerConfig", "TransformerWeights", "LayerWeights", "VerneTransformer"]
+
+# How many characters are generated between cache rebuilds once the text is
+# longer than the window. Each rebuild drops the oldest ``REFRESH_EVERY``
+# characters and recomputes the rest, which leaves exactly that many free slots
+# to append into before the next one. Larger is faster and keeps less context on
+# the newest characters; smaller is slower and closer to a true sliding window.
+REFRESH_EVERY = 64
 
 
 # --------------------------------------------------------------------------
@@ -440,14 +453,19 @@ class VerneTransformer:
     def generate(self, seed_text: str, num_generate: int = 800,
                  temperature: float = 0.7, top_k: int | None = None,
                  greedy: bool = False,
-                 rng: np.random.Generator | None = None) -> Iterator[str]:
+                 rng: np.random.Generator | None = None,
+                 refresh_every: int = REFRESH_EVERY) -> Iterator[str]:
         """Yield the seed text, then one generated character at a time.
 
-        The prompt fills the cache with ``ring=False`` (each prompt token
-        attends to every earlier one, matching training). Generation then
-        continues in ring mode: each new character overwrites the oldest cache
-        slot and costs exactly one pass through the stack, so the cost per
-        character does not grow with how long the text has become.
+        The prompt fills the cache with a full forward pass (each prompt token
+        attends to every earlier one, matching training), and each generated
+        character then costs one pass, appended to the cache.
+
+        When the window fills, the cache is rebuilt from the last
+        ``context - refresh_every`` characters, so generation continues on
+        positions that describe the real text. Set ``refresh_every=0`` to get
+        the old behaviour instead: the cache wraps and the text degrades
+        quickly. It is kept only so the lecture can show the failure.
         """
         cfg = self.config
         cleaned = "".join(c for c in seed_text if c in self._char_to_idx)
@@ -466,6 +484,9 @@ class VerneTransformer:
 
         yield cleaned
 
+        # The tail of the text, kept so the cache can be rebuilt exactly.
+        history = list(prompt)
+
         # Generation continues from where the prompt ended; positions keep
         # counting up and the slot (`pos % context`) is what indexes the learned
         # position table, so the window is renumbered once it wraps.
@@ -473,8 +494,19 @@ class VerneTransformer:
         for _ in range(int(num_generate)):
             index = self._sample(logits, temperature, top_k, greedy, rng)
             yield self.vocab[index]
-            logits = self.forward_step(index, cache, pos)
-            pos += 1
+            history.append(index)
+            if len(history) > cfg.context:
+                history = history[-cfg.context:]
+
+            if refresh_every and pos + 1 >= cfg.context:
+                # The window is full. Drop the oldest `refresh_every` characters
+                # and recompute the rest at their new positions; that frees the
+                # same number of slots to append into before the next rebuild.
+                keep = max(1, cfg.context - refresh_every)
+                logits, cache, pos = self.forward(history[-keep:])
+            else:
+                logits = self.forward_step(index, cache, pos)
+                pos += 1
 
     def _sample(self, logits: np.ndarray, temperature: float,
                 top_k: int | None, greedy: bool,

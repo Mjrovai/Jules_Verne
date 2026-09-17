@@ -1,0 +1,224 @@
+{
+  "config": {
+    "name": "transformer-paired-ctx120",
+    "vocab_size": 123,
+    "context": 120,
+    "d_model": 256,
+    "n_layers": 5,
+    "n_heads": 4,
+    "d_ff": 1024,
+    "dropout": 0.1,
+    "tie_embeddings": true,
+    "positional": "learned"
+  },
+  "parameters": 4011520,
+  "steps": 6000,
+  "exported_step": 5999,
+  "keep_best": true,
+  "last_step_val_loss": 1.1038923293352128,
+  "batch_size": 64,
+  "lr": 0.003,
+  "device": "mps",
+  "corpus_dir": "books_clean",
+  "vocab_dir": "books",
+  "split": "book",
+  "val_fraction": 0.05,
+  "train_characters": 5292865,
+  "val_characters": 278888,
+  "final_train_loss": 1.0543617570400239,
+  "final_val_loss": 1.1018677294254302,
+  "final_val_perplexity": 3.009782236378206,
+  "train_minutes": 5.72,
+  "torch_version": "2.14.0",
+  "history": [
+    {
+      "step": 0,
+      "lr": 1e-05,
+      "train": 4.772421145439148,
+      "val": 4.771037983894348,
+      "elapsed_s": 3.4
+    },
+    {
+      "step": 250,
+      "lr": 0.00251,
+      "train": 2.0276576191186906,
+      "val": 2.024085187911987,
+      "elapsed_s": 15.3
+    },
+    {
+      "step": 500,
+      "lr": 0.002991806414379232,
+      "train": 1.6545368373394012,
+      "val": 1.652008804678917,
+      "elapsed_s": 28.5
+    },
+    {
+      "step": 750,
+      "lr": 0.002958690359018096,
+      "train": 1.4899763762950897,
+      "val": 1.495412814617157,
+      "elapsed_s": 42.0
+    },
+    {
+      "step": 1000,
+      "lr": 0.002900766990739982,
+      "train": 1.4069688886404037,
+      "val": 1.4068777054548263,
+      "elapsed_s": 56.0
+    },
+    {
+      "step": 1250,
+      "lr": 0.0028191342951089924,
+      "train": 1.3430671572685242,
+      "val": 1.3599075973033905,
+      "elapsed_s": 69.7
+    },
+    {
+      "step": 1500,
+      "lr": 0.0027153396876851313,
+      "train": 1.2914841026067734,
+      "val": 1.3078151226043702,
+      "elapsed_s": 83.2
+    },
+    {
+      "step": 1750,
+      "lr": 0.0025913506814768937,
+      "train": 1.2713757485151291,
+      "val": 1.2838770925998688,
+      "elapsed_s": 96.7
+    },
+    {
+      "step": 2000,
+      "lr": 0.0024495175910977233,
+      "train": 1.2488376766443252,
+      "val": 1.259485900402069,
+      "elapsed_s": 111.6
+    },
+    {
+      "step": 2250,
+      "lr": 0.0022925289806000494,
+      "train": 1.2268214881420136,
+      "val": 1.2533349126577378,
+      "elapsed_s": 125.2
+    },
+    {
+      "step": 2500,
+      "lr": 0.0021233606995102183,
+      "train": 1.2105254888534547,
+      "val": 1.2235371768474579,
+      "elapsed_s": 138.8
+    },
+    {
+      "step": 2750,
+      "lr": 0.0019452194731286077,
+      "train": 1.1920344948768615,
+      "val": 1.211706218123436,
+      "elapsed_s": 152.4
+    },
+    {
+      "step": 3000,
+      "lr": 0.0017614821163876488,
+      "train": 1.17161263525486,
+      "val": 1.202769485116005,
+      "elapsed_s": 166.1
+    },
+    {
+      "step": 3250,
+      "lr": 0.0015756315235195813,
+      "train": 1.1506997168064117,
+      "val": 1.1829716682434082,
+      "elapsed_s": 179.9
+    },
+    {
+      "step": 3500,
+      "lr": 0.0013911906469029536,
+      "train": 1.1457125306129456,
+      "val": 1.1705130010843277,
+      "elapsed_s": 193.9
+    },
+    {
+      "step": 3750,
+      "lr": 0.0012116557165736776,
+      "train": 1.1314444363117218,
+      "val": 1.158410719037056,
+      "elapsed_s": 207.9
+    },
+    {
+      "step": 4000,
+      "lr": 0.0010404299662802997,
+      "train": 1.1202494382858277,
+      "val": 1.1615466505289078,
+      "elapsed_s": 222.9
+    },
+    {
+      "step": 4250,
+      "lr": 0.0008807591223611407,
+      "train": 1.1113372325897217,
+      "val": 1.1398700833320619,
+      "elapsed_s": 237.0
+    },
+    {
+      "step": 4500,
+      "lr": 0.0007356698783052497,
+      "train": 1.1009117275476457,
+      "val": 1.1256931662559508,
+      "elapsed_s": 251.3
+    },
+    {
+      "step": 4750,
+      "lr": 0.0006079125212629668,
+      "train": 1.0863473653793334,
+      "val": 1.125003856420517,
+      "elapsed_s": 265.9
+    },
+    {
+      "step": 5000,
+      "lr": 0.0004999087980682587,
+      "train": 1.0807185381650926,
+      "val": 1.121098557114601,
+      "elapsed_s": 280.6
+    },
+    {
+      "step": 5250,
+      "lr": 0.0004137060090156724,
+      "train": 1.0761730760335921,
+      "val": 1.1123829364776612,
+      "elapsed_s": 295.3
+    },
+    {
+      "step": 5500,
+      "lr": 0.00035093819958251194,
+      "train": 1.0650305837392806,
+      "val": 1.1047753065824508,
+      "elapsed_s": 310.1
+    },
+    {
+      "step": 5750,
+      "lr": 0.00031279518573937065,
+      "train": 1.0628173649311066,
+      "val": 1.1065066486597062,
+      "elapsed_s": 325.0
+    },
+    {
+      "step": 5999,
+      "lr": 0.00030000020504717767,
+      "train": 1.0601128369569779,
+      "val": 1.1038923293352128,
+      "elapsed_s": 340.0
+    }
+  ],
+  "samples": [
+    {
+      "step": 2000,
+      "text": "THE FLYING SUBMARINE THE MOSCANDEDS OF THE AN AND YORANNIN\n\n\"The travelers of the _Nautilus_, which we made the corral providence\nof the land only in the movement?\"\n\n\"Yes, John Mangles,\" said my uncle.\n\n\"I ask my dear Holt,\" answered the ground, \"I shall see the most proposible\nconsiderate in the sun\u2019s there.\"\n\n\"It is "
+    },
+    {
+      "step": 4000,
+      "text": "THE FLYING SUBMARINES\n\nAnd this day had not come toward the following a conversation of the\nsituation was completely attempted the sea of the iceberg. The colonists\ndiscovered the water-mountain and affairs to receive it from the earth?\n\nAs to the canal, everything was finished by the happy engineer, and one\nof the coa"
+    },
+    {
+      "step": 6000,
+      "text": "THE FLYING SUBMARINE TO DISCOVERY\n\nThe fearful transal sportsmen gravely affirmed the waves, the important\nstorm of the Pacific Ocean, having at Tabor Island, the stream of the\nnorthwest, nor the slacker, nor which the captain gave himself the mass\nof the granite. The sailor was not long in a doptive consequence betwee"
+    }
+  ]
+}

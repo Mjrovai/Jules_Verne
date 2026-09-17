@@ -4,17 +4,18 @@
    Decoder-only, pre-norm, learned absolute positions, weight-tied output head.
    Two things here mirror decisions in the Python engine and are load-bearing:
 
-   **The KV cache is a ring.** Once generation passes the context length, each
-   new character overwrites the oldest cache slot and costs exactly one pass
-   through the stack. Replaying the window instead is exact but costs `context`
-   passes per character; measured on the Python side that was 122 s versus 1.2 s
-   for 367 characters.
+   **The KV cache never wraps.** Each character costs one pass through the stack
+   while there is a free slot. With learned absolute positions, letting the ring
+   wrap would give the newest character a *low* position while older text keeps
+   the high ones, so the model would read a rotated window: measured on the
+   trained models, the text collapses into word salad within a few dozen
+   characters of the first wrap.
 
-   **The slot doubles as the position.** After the ring wraps, positions restart
-   at 0, so the window is always "the last C characters, numbered from its own
-   start" -- which is what training saw. Using the absolute position here gives
-   a generated token the embedding of a much later slot, and the text collapses
-   into gibberish from the first wrapped character.
+   **When the window fills, the cache is rebuilt.** The oldest REFRESH_EVERY
+   characters are dropped and the rest are run through the stack again at their
+   new positions, which frees that many slots to append into. The cost is one
+   window pass per REFRESH_EVERY characters, against one per character for a
+   full replay -- the whole point of having a cache.
 
    All weight tensors are (out, in), so a linear layer is always `W @ x`.
    ========================================================================== */
@@ -22,6 +23,10 @@
 import { Mat } from './loader.js';
 import { geluVec, layerNorm, softmax } from './nn.js';
 import { RNG, categorical } from './rng.js';
+
+/* Characters generated between cache rebuilds once the window is full. Mirrors
+   REFRESH_EVERY in vernebot/transformer.py; the parity test checks both. */
+const REFRESH_EVERY = 64;
 
 class TransformerModel {
   constructor(info, tensors, vocab) {
@@ -145,7 +150,7 @@ class TransformerModel {
   *generate(seedText, options) {
     const {
       numGenerate = 300, temperature = 0.7, topK = null, greedy = false,
-      seedValue = 0,
+      seedValue = 0, refreshEvery = REFRESH_EVERY,
     } = options || {};
 
     const charToIdx = new Map();
@@ -165,12 +170,27 @@ class TransformerModel {
     yield { char: cleaned, done: false };
 
     const rng = new RNG(seedValue);
+    // The tail of the text, so the cache can be rebuilt at the real positions.
+    const history = prompt.slice();
     let pos = prompt.length;
     for (let i = 0; i < numGenerate; i++) {
       const next = sample(logits, temperature, topK, greedy, rng);
       yield { char: this.vocab[next], done: i === numGenerate - 1 };
-      logits = this.step(next, pos);
-      pos += 1;
+      history.push(next);
+      if (history.length > this.context) history.splice(0, history.length - this.context);
+
+      if (refreshEvery && pos + 1 >= this.context) {
+        // Window full: keep the newest characters, recompute them at their new
+        // positions, and carry on appending.
+        const keep = Math.max(1, this.context - refreshEvery);
+        const tail = history.slice(-keep);
+        this.cache = this.freshCache();
+        for (let p = 0; p < tail.length; p++) logits = this.step(tail[p], p);
+        pos = tail.length;
+      } else {
+        logits = this.step(next, pos);
+        pos += 1;
+      }
     }
   }
 }
@@ -197,4 +217,4 @@ function sample(logits, temperature, topK, greedy, rng) {
   return categorical(softmax(Array.from(scaled)), rng);
 }
 
-export { TransformerModel, sample };
+export { TransformerModel, sample, REFRESH_EVERY };

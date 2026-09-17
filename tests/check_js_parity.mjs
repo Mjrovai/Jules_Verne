@@ -14,7 +14,7 @@
    the browser and here.
    ========================================================================== */
 
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -26,6 +26,11 @@ import { reflow } from '../docs/assets/demo/js/reflow.js';
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, '..');
 const MODELS = join(ROOT, 'docs', 'assets', 'models');
+const BOOKS = join(ROOT, 'books_clean');
+
+// Share of words past the window that must appear in the corpus. The rebuilt
+// cache scores about 97%; letting the ring wrap instead scores about 50%.
+const MIN_REAL_WORDS = 0.85;
 
 // float16 carries ~3 decimal digits, so each dot product is perturbed by about
 // 1e-3 relative, and a 5-layer stack over a 20-character prompt accumulates
@@ -157,13 +162,28 @@ if (manifest.models['tx-paired']) {
   check('argmax matches', jsTop[0] === pyTop[0],
     `js '${vocab[jsTop[0]]}' vs py '${vocab[pyTop[0]]}'`);
 
-  // The ring cache must keep working past the context length: generate well
-  // beyond it and confirm the text stays in-vocabulary and finite.
-  const gen = model.generate('THE MOON', { numGenerate: info.context + 40, greedy: true, seedValue: 1 });
+  // Generation past the window must stay coherent, and "coherent" has to be
+  // measured rather than assumed: the length of the output says nothing. Before
+  // the cache was rebuilt periodically, the text past the window degraded into
+  // word salad that this check now catches -- real words drop to about half.
+  const corpusWords = new Set();
+  for (const f of readdirSync(BOOKS)) {
+    if (!f.endsWith('.txt')) continue;
+    for (const w of readFileSync(join(BOOKS, f), 'utf8').toLowerCase().match(/[a-z]+/g) || []) {
+      corpusWords.add(w);
+    }
+  }
+
   let out = '';
-  for (const { char } of gen) out += char;
-  check('generation past the context length stays coherent', out.length > info.context,
-    `${out.length} characters (context ${info.context})`);
+  for (const { char } of model.generate('THE MOON',
+    { numGenerate: info.context + 350, temperature: 0.7, seedValue: 1 })) out += char;
+  // Skip the first window: the interesting part is what comes after it.
+  const past = (out.slice(info.context).toLowerCase().match(/[a-z]+/g) || []);
+  const known = past.filter((w) => corpusWords.has(w)).length;
+  const ratio = past.length ? known / past.length : 0;
+  check('generation past the context length stays coherent', ratio >= MIN_REAL_WORDS,
+    `${(ratio * 100).toFixed(1)}% real words in the ${past.length} written past the window`
+    + ` (threshold ${(MIN_REAL_WORDS * 100).toFixed(0)}%)`);
   check('generation contains no NaN artifacts',
     !/NaN|undefined/.test(out));
 } else {

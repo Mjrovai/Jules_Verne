@@ -1,0 +1,32 @@
+[IPKernelApp] WARNING | Kernel is running over TCP without encryption. All communication (including code and outputs) is sent in plain text and is susceptible to eavesdropping. Use IPC transport or launch with kernel manager-provisioned CurveZMQ keys to enable transport encryption.
+epoch 1: {'loss': 2.124945878982544, 'val_loss': 1.5794841051101685}
+epoch 2: {'loss': 1.4277459383010864, 'val_loss': 1.3309199810028076}
+epoch 3: {'loss': 1.273773431777954, 'val_loss': 1.2495810985565186}
+epoch 4: {'loss': 1.2033356428146362, 'val_loss': 1.2056483030319214}
+epoch 5: {'loss': 1.1601938009262085, 'val_loss': 1.1830695867538452}
+epoch 6: {'loss': 1.127929925918579, 'val_loss': 1.1682255268096924}
+epoch 7: {'loss': 1.1016132831573486, 'val_loss': 1.1610147953033447}
+epoch 8: {'loss': 1.079923391342163, 'val_loss': 1.151882529258728}
+epoch 9: {'loss': 1.0597898960113525, 'val_loss': 1.1475107669830322}
+epoch 10: {'loss': 1.0422884225845337, 'val_loss': 1.1459938287734985}
+epoch 11: {'loss': 1.0254603624343872, 'val_loss': 1.15074622631073}
+epoch 12: {'loss': 1.0100027322769165, 'val_loss': 1.1516046524047852}
+epoch 13: {'loss': 0.9950093626976013, 'val_loss': 1.1559226512908936}
+epoch 14: {'loss': 0.981188178062439, 'val_loss': 1.157485842704773}
+epoch 15: {'loss': 0.968449592590332, 'val_loss': 1.1604247093200684}
+epoch 16: {'loss': 0.9560043811798096, 'val_loss': 1.166890025138855}
+epoch 17: {'loss': 0.9448508620262146, 'val_loss': 1.173549771308899}
+epoch 18: {'loss': 0.9343616962432861, 'val_loss': 1.1783417463302612}
+epoch 19: {'loss': 0.9246176481246948, 'val_loss': 1.185063123703003}
+epoch 20: {'loss': 0.9159785509109497, 'val_loss': 1.192988395690918}
+epoch 21: {'loss': 0.9075778126716614, 'val_loss': 1.2005641460418701}
+epoch 22: {'loss': 0.900811493396759, 'val_loss': 1.2057843208312988}
+epoch 23: {'loss': 0.8944560885429382, 'val_loss': 1.2108761072158813}
+epoch 24: {'loss': 0.888886570930481, 'val_loss': 1.21795654296875}
+epoch 25: {'loss': 0.8840822577476501, 'val_loss': 1.2243720293045044}
+epoch 26: {'loss': 0.8798679709434509, 'val_loss': 1.2266908884048462}
+epoch 27: {'loss': 0.875993013381958, 'val_loss': 1.2317332029342651}
+epoch 28: {'loss': 0.8735738396644592, 'val_loss': 1.2375434637069702}
+epoch 29: {'loss': 0.8711650967597961, 'val_loss': 1.2387477159500122}
+epoch 30: {'loss': 0.8687949180603027, 'val_loss': 1.2447384595870972}
+saved executed notebook

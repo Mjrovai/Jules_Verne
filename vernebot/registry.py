@@ -25,6 +25,8 @@ plumbing around them.
 
 from __future__ import annotations
 
+import json
+
 import os
 from dataclasses import dataclass
 from pathlib import Path
@@ -128,8 +130,16 @@ class _RNNAdapter:
 
     architecture = "rnn"
 
-    def __init__(self, model: VerneRNN) -> None:
+    def __init__(self, model: VerneRNN, record: Path | None = None) -> None:
         self._m = model
+        # The .keras archive stores no metrics, so the validation loss comes
+        # from the run record the training notebook writes beside it.
+        self._val_loss: float | None = None
+        if record is not None and record.exists():
+            try:
+                self._val_loss = float(json.loads(record.read_text())["final_val_loss"])
+            except (ValueError, KeyError, OSError):
+                self._val_loss = None
 
     @property
     def vocab_size(self) -> int:
@@ -147,7 +157,7 @@ class _RNNAdapter:
 
     @property
     def training_loss(self) -> float | None:
-        return None      # not stored in the .keras archive
+        return self._val_loss
 
     @property
     def char_to_idx(self) -> dict[str, int]:
@@ -240,7 +250,7 @@ class ModelRegistry:
 
     def _load(self, architecture: str, path: Path) -> ModelAdapter:
         if architecture == "rnn":
-            return _RNNAdapter(VerneRNN.load(path))
+            return _RNNAdapter(VerneRNN.load(path), path.with_suffix(".json"))
         if architecture == "transformer":
             from .transformer import VerneTransformer
 

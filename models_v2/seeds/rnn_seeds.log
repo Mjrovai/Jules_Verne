@@ -1,0 +1,56 @@
+/private/tmp/claude-501/-Users-marcelo-rovai-Dropbox-2026-20-MJRoBot-Claude-Code-Projects-Jules-Verne/f0a636ce-fbb4-4d88-a827-fd8f236376d8/scratchpad/tfenv/lib/python3.12/site-packages/keras/src/trainers/epoch_iterator.py:74: UserWarning: `shuffle=True` was passed, but will be ignored since the data `x` was provided as a tf.data.Dataset. The Dataset is expected to already be shuffled (via `.shuffle(buffer_size)`).
+  self.data_adapter = data_adapters.get_data_adapter(
+Epoch 1/16
+341/341 - 198s - 580ms/step - loss: 2.1148 - val_loss: 1.5721
+Epoch 2/16
+341/341 - 282s - 827ms/step - loss: 1.4245 - val_loss: 1.3271
+Epoch 3/16
+341/341 - 304s - 890ms/step - loss: 1.2728 - val_loss: 1.2473
+Epoch 4/16
+341/341 - 171s - 502ms/step - loss: 1.2047 - val_loss: 1.2061
+Epoch 5/16
+341/341 - 170s - 500ms/step - loss: 1.1615 - val_loss: 1.1838
+Epoch 6/16
+341/341 - 168s - 493ms/step - loss: 1.1292 - val_loss: 1.1678
+Epoch 7/16
+341/341 - 165s - 484ms/step - loss: 1.1036 - val_loss: 1.1583
+Epoch 8/16
+341/341 - 165s - 484ms/step - loss: 1.0816 - val_loss: 1.1533
+Epoch 9/16
+341/341 - 164s - 481ms/step - loss: 1.0625 - val_loss: 1.1475
+Epoch 10/16
+341/341 - 164s - 482ms/step - loss: 1.0446 - val_loss: 1.1481
+Epoch 11/16
+341/341 - 164s - 481ms/step - loss: 1.0281 - val_loss: 1.1481
+Epoch 12/16
+341/341 - 164s - 481ms/step - loss: 1.0134 - val_loss: 1.1488
+seed 2: best val 1.1475 at epoch 9
+/private/tmp/claude-501/-Users-marcelo-rovai-Dropbox-2026-20-MJRoBot-Claude-Code-Projects-Jules-Verne/f0a636ce-fbb4-4d88-a827-fd8f236376d8/scratchpad/tfenv/lib/python3.12/site-packages/keras/src/trainers/epoch_iterator.py:74: UserWarning: `shuffle=True` was passed, but will be ignored since the data `x` was provided as a tf.data.Dataset. The Dataset is expected to already be shuffled (via `.shuffle(buffer_size)`).
+  self.data_adapter = data_adapters.get_data_adapter(
+Epoch 1/16
+341/341 - 163s - 478ms/step - loss: 2.1242 - val_loss: 1.5796
+Epoch 2/16
+341/341 - 165s - 483ms/step - loss: 1.4272 - val_loss: 1.3315
+Epoch 3/16
+341/341 - 168s - 493ms/step - loss: 1.2737 - val_loss: 1.2495
+Epoch 4/16
+341/341 - 174s - 509ms/step - loss: 1.2047 - val_loss: 1.2077
+Epoch 5/16
+341/341 - 176s - 516ms/step - loss: 1.1610 - val_loss: 1.1846
+Epoch 6/16
+341/341 - 171s - 502ms/step - loss: 1.1284 - val_loss: 1.1712
+Epoch 7/16
+341/341 - 173s - 507ms/step - loss: 1.1028 - val_loss: 1.1592
+Epoch 8/16
+341/341 - 171s - 502ms/step - loss: 1.0801 - val_loss: 1.1549
+Epoch 9/16
+341/341 - 169s - 496ms/step - loss: 1.0604 - val_loss: 1.1506
+Epoch 10/16
+341/341 - 171s - 501ms/step - loss: 1.0429 - val_loss: 1.1497
+Epoch 11/16
+341/341 - 172s - 504ms/step - loss: 1.0262 - val_loss: 1.1508
+Epoch 12/16
+341/341 - 173s - 509ms/step - loss: 1.0102 - val_loss: 1.1517
+Epoch 13/16
+341/341 - 170s - 499ms/step - loss: 0.9955 - val_loss: 1.1540
+seed 3: best val 1.1497 at epoch 10
