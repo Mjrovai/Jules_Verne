@@ -148,17 +148,27 @@ async function fetchWithProgress(url, onProgress) {
  * show per-model progress. Models load in the order given, so the RNN can be
  * made available before the Transformer starts downloading.
  */
-async function loadBundle(baseUrl, wanted, onProgress) {
-  const manifest = await fetchJSON(`${baseUrl}/manifest.json`);
+async function loadBundle(baseUrl, wanted, onProgress, version = '') {
+  // `version` is appended to every request. The manifest and the weight blobs
+  // are served with a long cache lifetime, so without it a returning visitor
+  // keeps the previous set -- which is how a page that had been updated to
+  // offer three models went on fetching a two-model manifest.
+  const bust = version ? `?v=${encodeURIComponent(version)}` : '';
+  const manifest = await fetchJSON(`${baseUrl}/manifest.json${bust}`);
   const vocab = manifest.vocab.split('');
   const models = {};
 
   for (const key of wanted) {
     const info = manifest.models[key];
-    if (!info) continue;
+    if (!info) {
+      // Silently skipping this used to surface later as "cannot read
+      // properties of undefined", which says nothing about the cause.
+      throw new Error(`the manifest has no model called "${key}" `
+        + `(it lists: ${Object.keys(manifest.models).join(', ') || 'none'})`);
+    }
 
     const buffer = await fetchWithProgress(
-      `${baseUrl}/${info.file}`,
+      `${baseUrl}/${info.file}${bust}`,
       onProgress ? (received, total) => onProgress(key, received, total) : null,
     );
     const flat = fp16ToFp32(buffer);

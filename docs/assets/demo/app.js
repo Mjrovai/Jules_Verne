@@ -3,25 +3,45 @@
 
    Loading strategy
    ----------------
-   The RNN is 8 MB of 16-bit weights and the Transformer is another 8 MB. Both
-   could be fetched together, but then the page is dead for however long 16 MB
-   takes. Instead:
+   There are three models and each is about 8 MB of 16-bit weights. Fetching all
+   of them up front would leave the page dead for 24 MB, so:
 
      1. the small manifest is read and the RNN is fetched, with a progress bar
      2. as soon as it is ready the page becomes usable
-     3. the Transformer is fetched in the background and its own bar fills in
-     4. once it lands, the model selector and the comparison unlock
+     3. the 256-character Transformer is fetched in the background
+     4. the 120-character Transformer -- the one that matches the RNN's window,
+        so that the pair isolates architecture -- is fetched only when it is
+        asked for: picked in the selector, or needed by "Run all three"
 
    Everything runs locally after that: no network per generation, no server.
    ========================================================================== */
 
-import { loadBundle } from './js/loader.js?v=2';
-import { GRUModel, sample as gruSample } from './js/gru.js?v=2';
-import { TransformerModel } from './js/transformer.js?v=2';
-import { reflow } from './js/reflow.js?v=2';
-import { RNG } from './js/rng.js?v=2';
+import { loadBundle } from './js/loader.js?v=3';
+import { GRUModel, sample as gruSample } from './js/gru.js?v=3';
+import { TransformerModel } from './js/transformer.js?v=3';
+import { reflow } from './js/reflow.js?v=3';
+import { RNG } from './js/rng.js?v=3';
 
 const BASE = 'assets/models';
+/* Bumped whenever the weights or the manifest change, and passed on every
+   request for them. Same purpose as the ?v= on the modules in index.html. */
+const ASSETS_VERSION = '3';
+
+/* The three models, in the order they are shown. `manifestKey` is what the
+   manifest and the .bin files call them; `lazy` marks the one that is not
+   downloaded until it is wanted. */
+const CATALOG = [
+  { key: 'rnn', manifestKey: 'rnn',
+    label: 'RNN · GRU 1024 (4.10M, ctx 120)', short: 'RNN · ctx 120',
+    note: '4.10M · ctx 120' },
+  { key: 'transformer120', manifestKey: 'tx-paired-ctx120',
+    label: 'Transformer · matched (4.04M, ctx 120)', short: 'Transformer · ctx 120',
+    note: '4.04M · ctx 120', lazy: true },
+  { key: 'transformer', manifestKey: 'tx-paired',
+    label: 'Transformer · matched (4.05M, ctx 256)', short: 'Transformer · ctx 256',
+    note: '4.05M · ctx 256' },
+];
+const byKey = (key) => CATALOG.find((m) => m.key === key);
 
 const SEEDS = [
   'THE FLYING SUBMARINE', 'CAPTAIN NEMO', 'THE MOON',
@@ -40,10 +60,15 @@ const ui = {
   errorSlot: el('error-slot'),
   loaderRnn: el('loader-rnn'), rnnBar: el('rnn-bar'), rnnPct: el('rnn-pct'), rnnLabel: el('rnn-label'),
   loaderTx: el('loader-tx'), txBar: el('tx-bar'), txPct: el('tx-pct'), txLabel: el('tx-label'),
+  loaderTx120: el('loader-tx120'), tx120Bar: el('tx120-bar'), tx120Pct: el('tx120-pct'),
+  tx120Label: el('tx120-label'),
+  theme: el('theme'),
 };
 
-/** Loaded models, keyed as in the manifest. */
+/** Loaded models, keyed as in CATALOG. */
 const models = {};
+/** In-flight lazy fetches, so two clicks do not download the same model twice. */
+const loading = {};
 let vocab = null;
 let busy = false;
 let lastText = '';
@@ -64,8 +89,9 @@ function showError(message) {
 function setBusy(state) {
   busy = state;
   ui.generate.disabled = state || !models.rnn;
-  const bothReady = models.rnn && models.transformer;
-  ui.compare.disabled = state || !bothReady;
+  // The 120-character Transformer may still be un-fetched; the comparison can
+  // ask for it, so it does not have to be loaded for the button to work.
+  ui.compare.disabled = state || !(models.rnn && models.transformer);
   ui.generate.textContent = state ? 'Writing…' : 'Generate';
 }
 
@@ -203,6 +229,8 @@ async function generate() {
   followOutput = true;
 
   const key = ui.model.value || 'rnn';
+  if (!models[key] && !(await ensureLoaded(key))) { setBusy(false); return; }
+
   const options = {
     numGenerate: Number(ui.length.value),
     temperature: Number(ui.temperature.value),
@@ -227,6 +255,54 @@ async function generate() {
   }
 }
 
+/* ------------------------------------------------------------ model wiring */
+
+function makeInstance(bundle) {
+  return bundle.info.architecture === 'rnn'
+    ? new GRUModel(bundle.info, bundle.tensors, vocab, bundle.info.context)
+    : new TransformerModel(bundle.info, bundle.tensors, vocab);
+}
+
+function register(key, bundle, label) {
+  models[key] = { instance: makeInstance(bundle), label, kind: bundle.info.architecture };
+}
+
+/* ------------------------------------------------------------ lazy loading */
+
+/**
+ * Fetch a model that was not downloaded at boot, showing its own progress bar.
+ * Returns true once the model is usable; a failure is reported and returns
+ * false, leaving everything else working.
+ */
+async function ensureLoaded(key) {
+  if (models[key]) return true;
+  const entry = byKey(key);
+  if (!entry) return false;
+  if (loading[key]) return loading[key];
+
+  ui.tx120Pct.textContent = 'starting…';
+  loading[key] = (async () => {
+    try {
+      const { models: fetched } = await loadBundle(BASE, [entry.manifestKey],
+        (_k, received, total) => {
+          ui.tx120Bar.style.width = total ? `${(received / total) * 100}%` : '100%';
+          ui.tx120Pct.textContent = progressText(received, total);
+        }, ASSETS_VERSION);
+      register(key, fetched[entry.manifestKey], entry.short);
+      markLoader(ui.loaderTx120, ui.tx120Bar, ui.tx120Pct, 'ready', 'ready');
+      refreshModelSelect();
+      return true;
+    } catch (error) {
+      markLoader(ui.loaderTx120, ui.tx120Bar, ui.tx120Pct, 'failed', 'failed');
+      showError(`The 120-character Transformer could not be loaded: ${error.message}`);
+      return false;
+    } finally {
+      loading[key] = null;
+    }
+  })();
+  return loading[key];
+}
+
 /* --------------------------------------------------------------- comparison */
 
 async function runComparison() {
@@ -245,16 +321,18 @@ async function runComparison() {
     seedValue: ui.seedValue.value.trim() === '' ? 7 : Number(ui.seedValue.value),
   };
 
-  const order = [
-    { key: 'rnn', name: 'RNN · GRU 1024', note: '4.10M · ctx 120' },
-    { key: 'transformer', name: 'Transformer · matched', note: '4.05M · ctx 256' },
-  ];
+  // The 120-character Transformer is the reason this comparison means anything:
+  // same size and same window as the RNN. Fetch it if the visitor has not
+  // needed it yet, and carry on without it if that fails.
+  await ensureLoaded('transformer120');
+  const order = CATALOG.filter((item) => models[item.key])
+    .map((item) => ({ key: item.key, name: item.short, note: item.note }));
 
   ui.compareGrid.innerHTML = '';
   const cards = {};
   for (const item of order) {
     const card = document.createElement('div');
-    card.className = `card pending ${item.key}`;
+    card.className = `card pending ${item.key === 'rnn' ? 'rnn' : 'tx'}`;
     card.innerHTML =
       `<header><span>${item.name}</span><span class="meta">${item.note}</span></header>` +
       `<div class="body"><span class="placeholder">Writing…</span></div>`;
@@ -302,27 +380,61 @@ function buildChips() {
 }
 
 function refreshModelSelect() {
-  const ready = [
-    models.rnn && { key: 'rnn', label: 'RNN · GRU 1024 (4.10M, ctx 120)' },
-    models.transformer && { key: 'transformer', label: 'Transformer · matched (4.05M, ctx 256)' },
-  ].filter(Boolean);
+  // A lazy model is listed before it is downloaded, with the size said plainly,
+  // so choosing it is an informed 8 MB rather than a surprise.
+  const options = CATALOG.filter((item) => models[item.key] || item.lazy);
+  if (!options.length) return;
 
-  if (!ready.length) return;
   const previous = ui.model.value;
   ui.model.innerHTML = '';
-  for (const item of ready) {
+  for (const item of options) {
     const option = document.createElement('option');
     option.value = item.key;
-    option.textContent = item.label;
+    option.textContent = models[item.key] ? item.label : `${item.label} — 8 MB, loads on pick`;
     ui.model.appendChild(option);
   }
-  ui.model.value = ready.some((r) => r.key === previous) ? previous : ready[0].key;
-  ui.model.disabled = ready.length < 2;
+  ui.model.value = options.some((o) => o.key === previous) ? previous : options[0].key;
+  ui.model.disabled = options.length < 2;
+}
+
+/* ------------------------------------------------------------------- theme */
+
+/**
+ * Lamplight (dark) or Daylight (light). The choice is remembered per browser;
+ * with nothing remembered the page follows the operating system, including when
+ * that changes while the page is open.
+ */
+function setTheme(theme, remember = true) {
+  document.documentElement.dataset.theme = theme;
+  ui.theme.setAttribute('aria-pressed', theme === 'light' ? 'true' : 'false');
+  ui.theme.querySelector('.theme-icon').textContent = theme === 'light' ? '☼' : '☾';
+  ui.theme.querySelector('.theme-text').textContent = theme === 'light' ? 'Daylight' : 'Lamplight';
+  if (!remember) return;
+  try { localStorage.setItem('verne-theme', theme); } catch { /* private mode */ }
+}
+
+function initTheme() {
+  let saved = null;
+  try { saved = localStorage.getItem('verne-theme'); } catch { /* private mode */ }
+  const system = window.matchMedia('(prefers-color-scheme: light)');
+  setTheme(saved === 'light' || saved === 'dark' ? saved
+    : (system.matches ? 'light' : 'dark'), false);
+
+  system.addEventListener('change', (event) => {
+    let stored = null;
+    try { stored = localStorage.getItem('verne-theme'); } catch { /* private mode */ }
+    if (!stored) setTheme(event.matches ? 'light' : 'dark', false);
+  });
+
+  ui.theme.addEventListener('click', () => {
+    setTheme(document.documentElement.dataset.theme === 'light' ? 'dark' : 'light');
+  });
 }
 
 /* -------------------------------------------------------------------- boot */
 
 async function boot() {
+  initTheme();
   buildChips();
   syncReadouts();
 
@@ -330,7 +442,11 @@ async function boot() {
   ui.length.addEventListener('input', syncReadouts);
   ui.generate.addEventListener('click', generate);
   ui.compare.addEventListener('click', runComparison);
-  ui.model.addEventListener('change', () => { if (lastText) generate(); });
+  ui.model.addEventListener('change', async () => {
+    const key = ui.model.value;
+    if (!models[key]) { await ensureLoaded(key); }
+    if (lastText) generate();
+  });
   ui.seed.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') { event.preventDefault(); generate(); }
   });
@@ -355,32 +471,20 @@ async function boot() {
   // The manifest carries the vocabulary and the tensor layout for both models.
   let manifest;
   try {
-    manifest = await (await fetch(`${BASE}/manifest.json`)).json();
+    manifest = await (await fetch(`${BASE}/manifest.json?v=${ASSETS_VERSION}`)).json();
   } catch (error) {
     showError(`Could not load the model manifest: ${error.message}`);
     return;
   }
   vocab = manifest.vocab.split('');
 
-  const makeInstance = (key, bundle) => (bundle.info.architecture === 'rnn'
-    ? new GRUModel(bundle.info, bundle.tensors, vocab, bundle.info.context)
-    : new TransformerModel(bundle.info, bundle.tensors, vocab));
-
-  const register = (key, bundle, label) => {
-    models[key] = {
-      instance: makeInstance(key, bundle),
-      label,
-      kind: bundle.info.architecture,
-    };
-  };
-
   // 1. the RNN, which makes the page usable
   try {
     const { models: rnnModels } = await loadBundle(BASE, ['rnn'], (key, received, total) => {
       ui.rnnBar.style.width = total ? `${(received / total) * 100}%` : '100%';
       ui.rnnPct.textContent = progressText(received, total);
-    });
-    register('rnn', rnnModels.rnn, 'RNN');
+    }, ASSETS_VERSION);
+    register('rnn', rnnModels.rnn, byKey('rnn').short);
     markLoader(ui.loaderRnn, ui.rnnBar, ui.rnnPct, 'ready', 'ready');
     ui.rnnLabel.textContent = 'RNN weights';
     refreshModelSelect();
@@ -400,8 +504,8 @@ async function boot() {
     const { models: txModels } = await loadBundle(BASE, ['tx-paired'], (key, received, total) => {
       ui.txBar.style.width = total ? `${(received / total) * 100}%` : '100%';
       ui.txPct.textContent = progressText(received, total);
-    });
-    register('transformer', txModels['tx-paired'], 'Transformer');
+    }, ASSETS_VERSION);
+    register('transformer', txModels['tx-paired'], byKey('transformer').short);
     markLoader(ui.loaderTx, ui.txBar, ui.txPct, 'ready', 'ready');
     ui.txLabel.textContent = 'Transformer weights';
     refreshModelSelect();
@@ -422,7 +526,7 @@ async function boot() {
   }
 
   // A small handle for automated checks and console experiments.
-  window.vernebot = { models, generate, runComparison, reflow };
+  window.vernebot = { models, generate, runComparison, reflow, ensureLoaded, setTheme };
 }
 
 boot();

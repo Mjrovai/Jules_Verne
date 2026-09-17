@@ -20,8 +20,9 @@ implemented in plain JavaScript ES modules.
 
 | | |
 |---|---|
-| Weights | 8.2 MB RNN + 8.0 MB Transformer, float16 |
-| Load order | RNN first (the page is usable in about a second), then the Transformer with a progress bar |
+| Weights | 8.2 MB RNN + 8.1 MB Transformer (ctx 256) + 8.1 MB Transformer (ctx 120), float16 |
+| Load order | RNN first (the page is usable in about a second), then the ctx-256 Transformer with a progress bar; the ctx-120 Transformer only when it is picked or the comparison needs it |
+| Themes | Lamplight and Daylight, remembered per browser, following the system setting until you choose |
 | Inference | ~2 ms/character for the RNN, ~8 ms for the Transformer |
 | Dependencies | none |
 
@@ -64,6 +65,11 @@ tensors are exported as `(out, in)`, so a linear layer is always `W @ x`.
 
 **The large Transformer is not exported.** At 97 MB it exceeds GitHub's 100 MB per-file
 limit and is far too much to hand a browser. It stays a Python-side model.
+
+The three exported models are the ones the comparison rests on: the RNN, the Transformer
+at the RNN's own 120-character window (the pair that isolates architecture), and the
+Transformer at 256 (what a longer window buys). The demo's **Run all three** puts them
+side by side on one seed.
 
 ### The browser port is verified, not assumed
 

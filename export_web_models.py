@@ -19,9 +19,12 @@ Three reasons, all of them practical:
 
 Output layout (all under ``--out``)::
 
-    manifest.json      tensor names -> {file, shape, offset, dtype}
-    rnn.bin            the GRU model's tensors, concatenated in order
-    tx-paired.bin      the 4M Transformer's tensors
+    manifest.json          tensor names -> {file, shape, offset, dtype}
+    rnn.bin                the GRU model's tensors, concatenated in order
+    tx-paired.bin          the 4M Transformer, context 256
+    tx-paired-ctx120.bin   the 4M Transformer, context 120 -- the one that
+                           isolates architecture, since it matches the RNN's
+                           window as well as its size
 
 The web demo fetches the manifest, then one binary per model, and views them as
 flat arrays.
@@ -235,7 +238,11 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Export models for the web demo.")
     parser.add_argument("--rnn", default=str(PROJECT_ROOT / "models" / "verne_rnn_model.keras"))
     parser.add_argument("--paired", default=str(PROJECT_ROOT / "models" / "tx-paired.h5"),
-                        help="The size-matched Transformer. Skipped if missing.")
+                        help="The size-matched Transformer, context 256. Skipped if missing.")
+    parser.add_argument("--paired-ctx120",
+                        default=str(PROJECT_ROOT / "models" / "tx-paired-ctx120.h5"),
+                        help="The size-matched Transformer at the RNN's own window. "
+                             "Skipped if missing.")
     parser.add_argument("--out", default=str(DEFAULT_OUT))
     parser.add_argument("--no-vocab", action="store_true",
                         help="Do not embed the vocabulary (reads books/ otherwise).")
@@ -279,29 +286,32 @@ def main() -> None:
     else:
         print(f"rnn        : skipped ({rnn_path} not found)")
 
-    # Size-matched Transformer
-    paired_path = Path(args.paired)
-    if paired_path.exists():
+    # The Transformers. Both are exported: one matches the RNN's window and
+    # isolates the architecture, the other shows what a longer window buys.
+    for key, source in (("tx-paired", args.paired),
+                        ("tx-paired-ctx120", args.paired_ctx120)):
+        path = Path(source)
+        if not path.exists():
+            print(f"{key:17s}: skipped ({path} not found)")
+            continue
         bundle = Bundle()
-        info = export_transformer(paired_path, bundle)
-        bundle.write(out / "tx-paired.bin")
+        info = export_transformer(path, bundle)
+        bundle.write(out / f"{key}.bin")
         # ``bundle.params`` double-counts a weight-tied embedding, because the
         # output head is the same tensor and the exporter writes it under both
         # names. The authoritative figure is the one stored in the file, which
         # comes from the training script and counts each parameter once.
         info.update({
-            "key": "tx-paired",
-            "file": "tx-paired.bin",
+            "key": key,
+            "file": f"{key}.bin",
             "tensors": bundle.entries,
             "parameter_count": info.get("parameter_count") or bundle.params,
             "exported_values": bundle.params,
-            "source": paired_path.name,
+            "source": path.name,
         })
-        manifest["models"]["tx-paired"] = info
-        size = (out / "tx-paired.bin").stat().st_size
-        print(f"tx-paired  : {bundle.params:>12,} params -> tx-paired.bin ({size / 1e6:.1f} MB)")
-    else:
-        print(f"tx-paired  : skipped ({paired_path} not found)")
+        manifest["models"][key] = info
+        size = (out / f"{key}.bin").stat().st_size
+        print(f"{key:17s}: {bundle.params:>12,} params -> {key}.bin ({size / 1e6:.1f} MB)")
 
     if not manifest["models"]:
         raise SystemExit("no models exported")

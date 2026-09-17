@@ -4,9 +4,24 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Jules Verne Bot — RNN vs Transformer, running in your browser</title>
-<meta name="description" content="Generate Jules Verne-style prose with a character-level GRU and a size-matched Transformer, both running entirely in the browser. Compare them on the same seed and temperature.">
+<meta name="description" content="Generate Jules Verne-style prose with a character-level GRU and two size-matched Transformers, all running entirely in the browser. Compare them on the same seed and temperature.">
 <link rel="icon" href="assets/img/favicon-64.png">
-<link rel="stylesheet" href="assets/demo/styles.css?v=2">
+<link rel="stylesheet" href="assets/demo/styles.css?v=3">
+<script>
+  /* Set the theme before the first paint: reading it later would show a flash of
+     the wrong one. Falls back to the operating system's setting. */
+  (function () {
+    try {
+      var saved = localStorage.getItem('verne-theme');
+      if (saved === 'light' || saved === 'dark') {
+        document.documentElement.dataset.theme = saved;
+        return;
+      }
+    } catch (e) { /* private mode: fall through to the OS setting */ }
+    document.documentElement.dataset.theme =
+      window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  })();
+</script>
 </head>
 <body>
 <div class="wrap">
@@ -15,11 +30,12 @@
     <img class="avatar" src="assets/img/jules_verne_robot.jpg" alt="Engraving of Jules Verne as a robot">
     <div class="titles">
       <h1>Jules Verne Bot <span class="amp">&amp;</span> the Writing Machine</h1>
-      <p class="tagline">Two character-level models trained on the Extraordinary Journeys —
-        a recurrent network and a Transformer — writing side by side, in your browser.</p>
+      <p class="tagline">Three character-level models trained on the Extraordinary Journeys —
+        a recurrent network and two Transformers — writing side by side, in your browser.</p>
       <div class="badges">
-        <span class="badge" id="badge-rnn">RNN · 4.10M</span>
-        <span class="badge" id="badge-tx">Transformer · 4.05M</span>
+        <span class="badge" id="badge-rnn">RNN · 4.10M · ctx 120</span>
+        <span class="badge" id="badge-tx120">Transformer · 4.04M · ctx 120</span>
+        <span class="badge" id="badge-tx">Transformer · 4.05M · ctx 256</span>
         <span class="badge">123-character vocabulary</span>
         <span class="badge">no server · no framework</span>
       </div>
@@ -29,6 +45,11 @@
         <a href="https://github.com/Mjrovai/Jules_Verne/blob/main/Train_JulesVerne_Transformer.ipynb">Training notebook</a>
       </div>
     </div>
+    <button type="button" class="theme-toggle" id="theme" aria-pressed="false"
+            title="Switch between the lamplit and the daylight reading room">
+      <span class="theme-icon" aria-hidden="true">☾</span>
+      <span class="theme-text">Lamplight</span>
+    </button>
   </header>
 
   <div id="error-slot"></div>
@@ -52,12 +73,18 @@
           </div>
 
           <div class="loader" id="loader-tx">
-            <div class="row"><span id="tx-label">Transformer weights</span><span class="pct" id="tx-pct">waiting</span></div>
+            <div class="row"><span id="tx-label">Transformer weights · ctx 256</span><span class="pct" id="tx-pct">waiting</span></div>
             <div class="bar"><i id="tx-bar"></i></div>
           </div>
-          <p class="hint">The RNN loads first so the page is usable immediately; the
-            Transformer is fetched in the background. Both are 8&nbsp;MB of 16-bit
-            weights.</p>
+
+          <div class="loader" id="loader-tx120">
+            <div class="row"><span id="tx120-label">Transformer weights · ctx 120</span><span class="pct" id="tx120-pct">on demand</span></div>
+            <div class="bar"><i id="tx120-bar"></i></div>
+          </div>
+          <p class="hint">The RNN loads first so the page is usable immediately, then the
+            256-character Transformer downloads in the background. Each model is about
+            8&nbsp;MB of 16-bit weights, so the third — the Transformer that matches the
+            RNN's own 120-character window — is fetched only when you ask for it.</p>
         </div>
 
         <div class="field">
@@ -134,25 +161,32 @@
           <h2>Side by Side</h2>
           <div style="display:flex; gap:9px; align-items:center">
             <span class="stats" id="compare-stats"></span>
-            <button type="button" class="btn btn-primary" id="compare" disabled>Run both</button>
+            <button type="button" class="btn btn-primary" id="compare" disabled>Run all three</button>
           </div>
         </div>
-        <p class="hint" style="margin-top:-4px">The same seed and temperature through
-          each model, so the difference you see is the architecture.</p>
+        <p class="hint" style="margin-top:-4px">The same seed, temperature and sampler
+          through each model. The first two have the same size <em>and</em> the same
+          120-character window, so what separates them is only recurrence against
+          attention; the third adds a longer window on top. Running all three fetches the
+          120-character Transformer if it is not loaded yet.</p>
         <div class="compare" id="compare-grid">
-          <div class="card pending">
-            <header><span>RNN</span><span class="meta">waiting</span></header>
+          <div class="card pending rnn">
+            <header><span>RNN · ctx 120</span><span class="meta">waiting</span></header>
             <div class="body"><span class="placeholder">Not yet run.</span></div>
           </div>
           <div class="card pending">
-            <header><span>Transformer</span><span class="meta">waiting</span></header>
+            <header><span>Transformer · ctx 120</span><span class="meta">waiting</span></header>
+            <div class="body"><span class="placeholder">Not yet run.</span></div>
+          </div>
+          <div class="card pending">
+            <header><span>Transformer · ctx 256</span><span class="meta">waiting</span></header>
             <div class="body"><span class="placeholder">Not yet run.</span></div>
           </div>
         </div>
       </section>
 
       <section class="panel">
-        <h2>What the Two Models Are</h2>
+        <h2>What the Three Models Are</h2>
 
         <figure>
           <img src="assets/img/rnn-vs-transformer.svg"
@@ -213,6 +247,6 @@
      with a long cache lifetime, so a returning visitor would otherwise keep
      running the previous version. Bump it (here and in the imports inside
      app.js and js/*.js) whenever the demo code changes. -->
-<script type="module" src="assets/demo/app.js?v=2"></script>
+<script type="module" src="assets/demo/app.js?v=3"></script>
 </body>
 </html>

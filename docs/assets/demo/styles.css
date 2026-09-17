@@ -4,6 +4,11 @@
    has to work from a GitHub Pages subpath and offline once loaded.
    ========================================================================== */
 
+/* Two themes, one set of tokens. Everything below paints with these, so the
+   light theme is the block of overrides at the end of this file rather than a
+   second stylesheet. The theme is set on <html data-theme> before the first
+   paint, by the inline script in index.html. */
+
 :root {
   --ink:         #f3e7cf;
   --ink-dim:     #b9a781;
@@ -16,6 +21,34 @@
   --edge:        rgba(217, 164, 65, 0.28);
   --field:       rgba(12, 9, 6, 0.55);
   --deep:        #100c08;
+
+  /* Surfaces and washes, named by what they do rather than by their colour,
+     so the light theme can redefine them without touching any rule. */
+  --page-wash-1: rgba(217, 164, 65, 0.13);
+  --page-wash-2: rgba(176, 106, 59, 0.16);
+  --page-grad:   linear-gradient(170deg, #17110a 0%, #0d0a07 55%, #120d08 100%);
+  --tint-soft:   rgba(217, 164, 65, 0.06);
+  --tint:        rgba(217, 164, 65, 0.09);
+  --tint-strong: rgba(217, 164, 65, 0.12);
+  --rule:        rgba(217, 164, 65, 0.14);
+  --halo:        rgba(217, 164, 65, 0.10);
+  --well:        linear-gradient(rgba(10, 8, 5, 0.72), rgba(10, 8, 5, 0.9));
+  --well-shadow: inset 0 0 60px rgba(0, 0, 0, 0.6);
+  --card-bg:     rgba(10, 8, 5, 0.5);
+  --sunken:      rgba(0, 0, 0, 0.25);
+  --track:       rgba(255, 255, 255, 0.05);
+  --bar-track:   rgba(255, 255, 255, 0.08);
+  --thumb:       rgba(217, 164, 65, 0.45);
+  --thumb-hover: rgba(217, 164, 65, 0.70);
+  --panel-shadow: 0 18px 40px -20px rgba(0, 0, 0, 0.85);
+  --glow:        rgba(217, 164, 65, 0.22);
+  --focus-ring:  rgba(217, 164, 65, 0.16);
+  --diagram-bg:  #fbf8f2;
+  --rnn-edge:    rgba(120, 180, 140, 0.35);
+  --alert-edge:  rgba(214, 96, 68, 0.5);
+  --alert-bg:    rgba(150, 46, 30, 0.22);
+  --alert-ink:   #ffd9cd;
+  --ok-bar:      linear-gradient(90deg, #2f6b4f, #6fbf94);
 
   --display: "Palatino Linotype", "Book Antiqua", Palatino, "Iowan Old Style", Georgia, serif;
   --body:    Georgia, "Times New Roman", serif;
@@ -33,9 +66,9 @@ body {
   line-height: 1.65;
   background-color: var(--deep);
   background-image:
-    radial-gradient(circle at 12% 6%,  rgba(217, 164, 65, 0.13), transparent 46%),
-    radial-gradient(circle at 88% 0%,  rgba(176, 106, 59, 0.16), transparent 44%),
-    linear-gradient(170deg, #17110a 0%, #0d0a07 55%, #120d08 100%);
+    radial-gradient(circle at 12% 6%,  var(--page-wash-1), transparent 46%),
+    radial-gradient(circle at 88% 0%,  var(--page-wash-2), transparent 44%),
+    var(--page-grad);
   background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
 }
@@ -51,13 +84,23 @@ body {
 .masthead img.avatar {
   width: 96px; height: 96px; border-radius: 50%; object-fit: cover; flex: none;
   border: 2px solid var(--brass);
-  box-shadow: 0 0 0 6px rgba(217, 164, 65, 0.10);
+  box-shadow: 0 0 0 6px var(--halo);
 }
 .masthead .titles { flex: 1 1 320px; }
+.theme-toggle {
+  flex: none; align-self: flex-start; display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--ui); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--brass-light); background: var(--tint-soft);
+  border: 1px solid var(--edge); border-radius: 999px; padding: 7px 14px; cursor: pointer;
+}
+.theme-toggle:hover { color: var(--brass-pale); border-color: var(--brass); }
+.theme-toggle:focus-visible { outline: 2px solid var(--brass); outline-offset: 3px; }
+.theme-icon { font-size: 0.95rem; line-height: 1; }
+@media (max-width: 560px) { .theme-toggle { align-self: stretch; justify-content: center; } }
 h1 {
   font-family: var(--display); font-size: clamp(1.7rem, 4vw, 2.6rem);
   margin: 0 0 4px; line-height: 1.05;
-  text-shadow: 0 2px 14px rgba(217, 164, 65, 0.22);
+  text-shadow: 0 2px 14px var(--glow);
 }
 h1 .amp { color: var(--brass); font-style: italic; }
 .tagline { margin: 0; color: var(--ink-dim); font-style: italic; font-size: 1rem; }
@@ -69,7 +112,7 @@ h1 .amp { color: var(--brass); font-style: italic; }
 .badge {
   font-family: var(--ui); font-size: 0.7rem; letter-spacing: 0.09em;
   text-transform: uppercase; color: var(--brass-light);
-  border: 1px solid var(--edge); background: rgba(217, 164, 65, 0.07);
+  border: 1px solid var(--edge); background: var(--tint-soft);
   border-radius: 999px; padding: 4px 11px; white-space: nowrap;
 }
 
@@ -80,7 +123,7 @@ h1 .amp { color: var(--brass); font-style: italic; }
 
 .panel {
   background: var(--panel); border: 1px solid var(--edge); border-radius: 10px;
-  padding: 20px; box-shadow: 0 18px 40px -20px rgba(0, 0, 0, 0.85);
+  padding: 20px; box-shadow: var(--panel-shadow);
 }
 .panel + .panel { margin-top: 20px; }
 .panel.docked { position: sticky; top: 16px; }
@@ -107,7 +150,7 @@ input[type="text"], input[type="number"], select {
   background: var(--field); border: 1px solid var(--edge); border-radius: 8px;
   padding: 10px 12px;
 }
-input:focus, select:focus { outline: none; border-color: var(--brass); box-shadow: 0 0 0 3px rgba(217, 164, 65, 0.16); }
+input:focus, select:focus { outline: none; border-color: var(--brass); box-shadow: 0 0 0 3px var(--focus-ring); }
 input::placeholder { color: var(--ink-faint); font-style: italic; }
 select { font-family: var(--ui); font-size: 0.9rem; cursor: pointer; }
 select:disabled { opacity: 0.6; cursor: progress; }
@@ -136,7 +179,7 @@ input[type="range"]::-moz-range-thumb { width: 17px; height: 17px; border-radius
 .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .chip {
   font-family: var(--ui); font-size: 0.72rem; color: var(--ink-dim);
-  background: rgba(217, 164, 65, 0.06); border: 1px solid var(--edge);
+  background: var(--tint-soft); border: 1px solid var(--edge);
   border-radius: 999px; padding: 4px 10px; cursor: pointer;
 }
 .chip:hover { color: var(--deep); background: var(--brass); border-color: var(--brass); }
@@ -145,14 +188,14 @@ input[type="range"]::-moz-range-thumb { width: 17px; height: 17px; border-radius
 
 .loader {
   margin-top: 8px; border: 1px solid var(--edge); border-radius: 7px;
-  padding: 10px 12px; background: rgba(0, 0, 0, 0.25);
+  padding: 10px 12px; background: var(--sunken);
 }
 .loader .row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-family: var(--ui); font-size: 0.74rem; color: var(--ink-dim); }
 .loader .pct { font-family: var(--mono); color: var(--brass); }
-.bar { height: 6px; margin-top: 8px; border-radius: 999px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
+.bar { height: 6px; margin-top: 8px; border-radius: 999px; background: var(--bar-track); overflow: hidden; }
 .bar > i { display: block; height: 100%; width: 0%; border-radius: 999px; background: linear-gradient(90deg, #8a5b1c, var(--brass), var(--brass-pale)); transition: width 0.18s linear; }
-.loader.ready .bar > i { background: linear-gradient(90deg, #2f6b4f, #6fbf94); }
-.loader.failed { border-color: rgba(214, 96, 68, 0.55); }
+.loader.ready .bar > i { background: var(--ok-bar); }
+.loader.failed { border-color: var(--alert-edge); }
 .loader.failed .pct { color: #ffb9a6; }
 
 /* ----------------------------------------------------------------- buttons */
@@ -160,7 +203,7 @@ input[type="range"]::-moz-range-thumb { width: 17px; height: 17px; border-radius
 .btn {
   font-family: var(--ui); font-size: 0.82rem; letter-spacing: 0.11em; text-transform: uppercase;
   border-radius: 8px; padding: 12px 16px; cursor: pointer;
-  border: 1px solid var(--edge); background: rgba(217, 164, 65, 0.06); color: var(--ink-dim);
+  border: 1px solid var(--edge); background: var(--tint-soft); color: var(--ink-dim);
   transition: background 0.18s, color 0.18s, border-color 0.18s;
 }
 .btn:hover:not(:disabled) { color: var(--brass-light); border-color: var(--brass); }
@@ -193,24 +236,24 @@ input[type="range"]::-moz-range-thumb { width: 17px; height: 17px; border-radius
   overflow-wrap: anywhere; min-height: 240px; max-height: 60vh;
   overflow-y: auto; overscroll-behavior: contain;
   padding: 20px 22px; border-radius: 8px; border: 1px solid var(--edge);
-  background: linear-gradient(rgba(10, 8, 5, 0.72), rgba(10, 8, 5, 0.9));
-  box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.6);
+  background: var(--well);
+  box-shadow: var(--well-shadow);
   /* The generated text regularly runs past the panel, and macOS hides overlay
      scrollbars until you already know to scroll. Pin a slimmer brass one so it
      is obvious there is more to read. */
   scrollbar-width: thin;
-  scrollbar-color: rgba(217, 164, 65, 0.45) rgba(255, 255, 255, 0.05);
+  scrollbar-color: var(--thumb) var(--track);
 }
 
 .story::-webkit-scrollbar { width: 10px; }
-.story::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); border-radius: 0 8px 8px 0; }
+.story::-webkit-scrollbar-track { background: var(--track); border-radius: 0 8px 8px 0; }
 .story::-webkit-scrollbar-thumb {
-  background: rgba(217, 164, 65, 0.40);
+  background: var(--thumb);
   border-radius: 999px;
   border: 2px solid transparent;
   background-clip: content-box;
 }
-.story::-webkit-scrollbar-thumb:hover { background: rgba(217, 164, 65, 0.70); background-clip: content-box; }
+.story::-webkit-scrollbar-thumb:hover { background: var(--thumb-hover); background-clip: content-box; }
 
 /* Keyboard scrolling needs a focusable, focus-visible target. */
 .story:focus-visible { outline: 2px solid var(--brass); outline-offset: 3px; }
@@ -221,15 +264,19 @@ input[type="range"]::-moz-range-thumb { width: 17px; height: 17px; border-radius
 
 /* -------------------------------------------------------------- comparison */
 
-.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 14px; }
+.compare { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 14px; }
+@media (max-width: 1100px) { .compare { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 780px) { .compare { grid-template-columns: 1fr; } }
-.card { border: 1px solid var(--edge); border-radius: 8px; overflow: hidden; background: rgba(10, 8, 5, 0.5); display: flex; flex-direction: column; }
+/* Three columns are narrow, so let the model name wrap there rather than
+   pushing the measurements out of the card. */
+@media (min-width: 1101px) { .card header > span:first-child { white-space: normal; } }
+.card { border: 1px solid var(--edge); border-radius: 8px; overflow: hidden; background: var(--card-bg); display: flex; flex-direction: column; }
 .card header {
   display: flex; justify-content: space-between; align-items: baseline;
   gap: 4px 10px; flex-wrap: wrap;
   padding: 9px 13px; font-family: var(--ui); font-size: 0.72rem; letter-spacing: 0.09em;
   text-transform: uppercase; color: var(--brass-light);
-  background: rgba(217, 164, 65, 0.09); border-bottom: 1px solid var(--edge);
+  background: var(--tint); border-bottom: 1px solid var(--edge);
 }
 /* Keep the model name on one line; the measurements may wrap below it. */
 .card header > span:first-child { white-space: nowrap; }
@@ -239,33 +286,82 @@ input[type="range"]::-moz-range-thumb { width: 17px; height: 17px; border-radius
   padding: 13px; max-height: 320px; overflow-y: auto; flex: 1;
   overscroll-behavior: contain;
   scrollbar-width: thin;
-  scrollbar-color: rgba(217, 164, 65, 0.45) rgba(255, 255, 255, 0.05);
+  scrollbar-color: var(--thumb) var(--track);
 }
 .card .body::-webkit-scrollbar { width: 9px; }
-.card .body::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); }
-.card .body::-webkit-scrollbar-thumb { background: rgba(217, 164, 65, 0.40); border-radius: 999px; border: 2px solid transparent; background-clip: content-box; }
-.card .body::-webkit-scrollbar-thumb:hover { background: rgba(217, 164, 65, 0.70); background-clip: content-box; }
+.card .body::-webkit-scrollbar-track { background: var(--track); }
+.card .body::-webkit-scrollbar-thumb { background: var(--thumb); border-radius: 999px; border: 2px solid transparent; background-clip: content-box; }
+.card .body::-webkit-scrollbar-thumb:hover { background: var(--thumb-hover); background-clip: content-box; }
 .card .body:focus-visible { outline: 2px solid var(--brass); outline-offset: -2px; }
 .card .body .seed { color: var(--brass-pale); font-weight: 600; }
 .card.pending .body { color: var(--ink-faint); font-style: italic; }
-.card.rnn header { border-bottom-color: rgba(120, 180, 140, 0.35); }
+.card.rnn header { border-bottom-color: var(--rnn-edge); }
 
 /* ---------------------------------------------------------------- diagram */
 
 figure { margin: 0; }
-figure img { width: 100%; height: auto; display: block; border: 1px solid var(--edge); border-radius: 8px; background: #fbf8f2; }
+figure img { width: 100%; height: auto; display: block; border: 1px solid var(--edge); border-radius: 8px; background: var(--diagram-bg); }
 figcaption { font-size: 0.8rem; color: var(--ink-faint); font-style: italic; margin-top: 8px; }
 
 table.measure { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-table.measure th, table.measure td { text-align: left; padding: 7px 10px; border-bottom: 1px solid rgba(217, 164, 65, 0.14); }
+table.measure th, table.measure td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--rule); }
 table.measure th { font-family: var(--ui); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-dim); font-weight: normal; }
 table.measure td.num { font-family: var(--mono); color: var(--brass-light); text-align: right; }
 table.measure tr.baseline td { color: var(--ink-faint); }
 
-.alert { border: 1px solid rgba(214, 96, 68, 0.5); background: rgba(150, 46, 30, 0.22); color: #ffd9cd; border-radius: 8px; padding: 11px 14px; font-size: 0.88rem; margin-bottom: 14px; }
+.alert { border: 1px solid var(--alert-edge); background: var(--alert-bg); color: var(--alert-ink); border-radius: 8px; padding: 11px 14px; font-size: 0.88rem; margin-bottom: 14px; }
 
 footer.colophon { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--edge); text-align: center; font-size: 0.8rem; color: var(--ink-faint); }
 footer.colophon a { color: var(--ink-dim); }
 
-kbd { font-family: var(--mono); font-size: 0.78em; color: var(--brass-light); background: rgba(217, 164, 65, 0.12); border: 1px solid var(--edge); border-bottom-width: 2px; border-radius: 4px; padding: 1px 5px; }
+kbd { font-family: var(--mono); font-size: 0.78em; color: var(--brass-light); background: var(--tint-strong); border: 1px solid var(--edge); border-bottom-width: 2px; border-radius: 4px; padding: 1px 5px; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+/* ------------------------------------------------------------ light theme */
+
+/* The daylight reading room: same brass and ink, inverted. Only the tokens
+   change — no rule above knows which theme is on. The brass is darkened here
+   because the lamplit tones do not carry enough contrast on parchment. */
+
+:root[data-theme="light"] {
+  --ink:         #2a2018;
+  --ink-dim:     #574734;
+  --ink-faint:   #7a6950;
+  --brass:       #9a6b12;
+  --brass-light: #7c5410;
+  --brass-pale:  #64430b;
+  --copper:      #8d4f24;
+  --panel:       rgba(255, 251, 243, 0.86);
+  --edge:        rgba(122, 88, 28, 0.26);
+  --field:       rgba(255, 253, 248, 0.9);
+  --deep:        #efe3cd;
+
+  --page-wash-1: rgba(217, 164, 65, 0.22);
+  --page-wash-2: rgba(176, 106, 59, 0.16);
+  --page-grad:   linear-gradient(170deg, #f7edda 0%, #eee1c9 55%, #f4ead7 100%);
+  --tint-soft:   rgba(154, 107, 18, 0.07);
+  --tint:        rgba(154, 107, 18, 0.11);
+  --tint-strong: rgba(154, 107, 18, 0.15);
+  --rule:        rgba(154, 107, 18, 0.18);
+  --halo:        rgba(154, 107, 18, 0.12);
+  --well:        linear-gradient(#fffdf7, #fbf4e6);
+  --well-shadow: inset 0 0 40px rgba(150, 110, 45, 0.10);
+  --card-bg:     rgba(255, 252, 245, 0.75);
+  --sunken:      rgba(154, 107, 18, 0.06);
+  --track:       rgba(122, 88, 28, 0.08);
+  --bar-track:   rgba(122, 88, 28, 0.12);
+  --thumb:       rgba(154, 107, 18, 0.45);
+  --thumb-hover: rgba(154, 107, 18, 0.70);
+  --panel-shadow: 0 16px 34px -24px rgba(94, 66, 22, 0.55);
+  --glow:        rgba(154, 107, 18, 0.14);
+  --focus-ring:  rgba(154, 107, 18, 0.20);
+  --rnn-edge:    rgba(60, 130, 95, 0.40);
+  --alert-edge:  rgba(168, 58, 32, 0.45);
+  --alert-bg:    rgba(214, 96, 68, 0.14);
+  --alert-ink:   #7d2a13;
+  --ok-bar:      linear-gradient(90deg, #4c8f6c, #2f6b4f);
+}
+
+/* The avatar and the diagrams are drawn light already; on parchment they only
+   need a softer frame. */
+:root[data-theme="light"] figure img { background: #fffdf7; }

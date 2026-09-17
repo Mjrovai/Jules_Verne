@@ -88,30 +88,30 @@
     <text x="504" y="426" font-family="'SF Mono', Menlo, monospace">256</text>
 
     <text x="24" y="448">validation loss (held out)</text>
-    <text x="476" y="448" text-anchor="end" fill="#8a7a5c">not comparable¹</text>
-    <text x="504" y="448" font-family="'SF Mono', Menlo, monospace">1.009</text>
+    <text x="476" y="448" text-anchor="end" font-family="'SF Mono', Menlo, monospace">1.146</text>
+    <text x="504" y="448" font-family="'SF Mono', Menlo, monospace">1.034</text>
 
     <text x="24" y="470">milliseconds per character</text>
     <text x="476" y="470" text-anchor="end" font-family="'SF Mono', Menlo, monospace">0.15</text>
-    <text x="504" y="470" font-family="'SF Mono', Menlo, monospace">3.5</text>
+    <text x="504" y="470" font-family="'SF Mono', Menlo, monospace">8.1</text>
 
     <text x="24" y="492">400 characters take</text>
     <text x="476" y="492" text-anchor="end" font-family="'SF Mono', Menlo, monospace">0.06 s</text>
-    <text x="504" y="492" font-family="'SF Mono', Menlo, monospace">1.4 s</text>
+    <text x="504" y="492" font-family="'SF Mono', Menlo, monospace">3.2 s</text>
   </g>
 
   <!-- footnote -->
   <text x="24" y="524" font-size="11" fill="#8a7a5c">
-    ¹ The RNN's 0.45 loss was reported on the training set in the original notebook, so it is not like-for-like with a held-out number.
+    Both losses are held out: the same 5% from the middle of every novel, with the Gutenberg license removed from the corpus. Three seeds each.
   </text>
 
   <!-- conclusion box -->
   <rect x="24" y="544" width="932" height="56" rx="8" fill="#f3e7cf" stroke="#c9a227" stroke-width="1.5"/>
   <text x="44" y="568" font-size="12.5" fill="#2f2416">
     <tspan font-weight="bold">What the experiment isolates:</tspan>
-    at equal size and equal tokenizer, longer context improved held-out loss from 1.098 to 1.009.
+    at equal size, equal tokenizer and an equal 120-character window, attention beat recurrence — 1.102 against 1.146.
   </text>
   <text x="44" y="588" font-size="12.5" fill="#2f2416">
-    A 25M-parameter version reached 0.597 on the training set but only 1.083 held out — more parameters, no better generalisation.
+    Widening the window to 256 characters bought a further 0.068, so context length mattered more here than the architecture did.
   </text>
 </svg>
