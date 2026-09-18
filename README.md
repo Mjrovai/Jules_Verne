@@ -154,8 +154,8 @@ The full experiment design, the measured costs and the honest caveats are in
 window, attention beats recurrence by 0.044 nats per character (1.102 against 1.146);
 widening the window to 256 characters buys a further 0.068, so **context length matters
 more here than the architecture change does**. The RNN's validation loss bottoms out at
-epoch 10 of 30 and rises afterwards, which is what the notebook's 0.45 training loss was
-hiding.
+epoch 10 of 30 and rises afterwards, which is what the notebook's final training loss of
+0.87 was hiding.
 
 ---
 

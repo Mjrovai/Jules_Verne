@@ -127,9 +127,9 @@ bought. *At fixed size, more context buys accuracy.*
 
 **The RNN memorizes, and 30 epochs is past the point of usefulness.** Its
 validation loss bottoms out at epoch 10 in all three seeds and then rises to
-1.245 by epoch 30 while training loss keeps falling to 0.869. This is what the
-original notebook's 0.45 was measuring: the training set, at the end of a run
-that had long since started overfitting. Without the best-checkpoint callback,
+1.245 by epoch 30 while training loss keeps falling to 0.869. The course
+notebook's own run ended at the same place, 0.87 at epoch 30, measured on the
+training set at the end of a run that had long since started overfitting. Without the best-checkpoint callback,
 the exported model would be the worst one of the run.
 
 **One caveat weakens the architecture claim.** The Transformers use dropout 0.1
@@ -305,8 +305,10 @@ temperature across all of them at once.
 
 ## Limitations to state plainly
 
-- **The 0.45 in the course notebook is a training loss** at epoch 30 of a run
-  with no validation set. It is not comparable to anything here. The RNN's
+- **The course notebook reports no held-out loss.** Its run ended at a training
+  loss of 0.87 at epoch 30, with no validation set, so it is not comparable to
+  anything here. (The notebook's own text says "0.45 across 50 epochs"; its
+  training log shows 30 epochs ending at 0.87, and the log is what was run.) The RNN's
   held-out number is **1.146**, from `Train_JulesVerne_RNN.ipynb`, which retrains
   the same architecture on the shared split.
 - **The RNN has no dropout and the Transformers have 0.1.** Everything else is
